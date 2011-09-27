@@ -2,19 +2,27 @@
 
 IP 172.0.0.1:
   --------------------
-  Request: /v1/lookupips/ - GET - locate ip addresses 
+  Request: /v1/lookupurls/ - GET - locate ip addresses 
   Response: mime: text/xml
-    <ips>
-       <ip>1.2.3.4</ip> 
-       ...
-    </ips>
+    <urls>
+     <url>http://1.2.3.4:port</url> 
+     <url>http://www.jazstudios.com:port</url> 
+     ...
+    </urls>
 
   --------------------
-  Request: /v1/registerips/ - POST - register your ip address
+  Request: /v1/registerurls/ - POST - register your ip address
   Response: mime: text/xml
-    <ips>
-     <ip>4.3.2.1</ip> 
+    <urls>
+     <url>http://1.2.3.4:port</url> 
+     <url>http://www.jazstudios.com:port</url> 
      ...
-    </ips>
+    </urls>
  
   --------------------
+  Request: /v1/whoami - GET 
+  Response: email address 
+
+  --------------------
+  Request: /v1/logs - GET
+  ???  

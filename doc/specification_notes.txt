@@ -1,0 +1,17 @@
+
+
+IP 172.0.0.1:
+  --------------------
+  Request: /v1/lookupips/ - GET - locate ip addresses 
+  Response: mime: text/xml
+    <ips>
+       <ip>1.2.3.4</ip> 
+       ...
+    </ips>
+
+  --------------------
+  Request: /v1/register/ - POST - register your ip address
+  Response: mime: text/xml
+    <ip>4.3.2.1</ip> 
+ 
+ 

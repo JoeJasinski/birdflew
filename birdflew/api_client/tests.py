@@ -7,7 +7,7 @@ Replace this with more appropriate tests for your application.
 
 from django.test import TestCase
 from api_client import utils
-
+from lxml import etree
 
 try:
     from cStringIO import StringIO
@@ -40,4 +40,23 @@ class ClientTest(TestCase):
     def test_get_tree_from_file(self):
         c = utils.ClientParser()
         tree = c.get_tree_from_file(self.xml_file)
-        self.assertEqual(1 + 1, 2)
+        self.assertTrue(tree, etree._Element)
+ 
+
+    def test_get_root_from_tree(self):
+        c = utils.ClientParser()
+        tree = c.get_tree_from_file(self.xml_file)
+        root = c.get_root_from_tree(tree)
+        self.assertEqual(root.tag, 'urls')
+        self.assertTrue(root, etree._Element)
+
+
+    def test_get_url_from_root(self):
+        c = utils.ClientParser()
+        tree = c.get_tree_from_file(self.xml_file)
+        root = c.get_root_from_tree(tree)
+        children = c.get_url_from_root(root)
+        self.assertTrue(len(children) == 2)
+        self.assertTrue(children[0].tag == 'url')
+        self.assertTrue(children[1].tag == 'url')
+        self.assertTrue(isinstance(children[0], etree._Element))

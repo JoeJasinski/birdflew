@@ -29,11 +29,16 @@ class ClientParser(object):
         tree = etree.parse(neighbor_file)
         return tree
     
+    def get_root_from_tree(self, tree):
+        return tree.getroot()
+
+    def get_url_from_root(self, root):
+        return root.getchildren()
     
     def get_neighbors_urls(self, url_socket):
         
         url = "%s/lookupurls/" % url_socket 
         neighbor_file = self.get_url_as_file(url)
-        self.get_root_from_file(neighbor_file)
-        
+        tree = self.get_tree_from_file(neighbor_file)
+        root = self.get_root_from_tree(tree)
         

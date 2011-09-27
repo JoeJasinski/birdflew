@@ -10,8 +10,11 @@ IP 172.0.0.1:
     </ips>
 
   --------------------
-  Request: /v1/register/ - POST - register your ip address
+  Request: /v1/registerips/ - POST - register your ip address
   Response: mime: text/xml
-    <ip>4.3.2.1</ip> 
+    <ips>
+     <ip>4.3.2.1</ip> 
+     ...
+    </ips>
  
- 
+  --------------------

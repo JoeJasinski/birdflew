@@ -13,3 +13,4 @@ parts
 project/media/uploads
 tmp
 dist
+birdflew/test.db

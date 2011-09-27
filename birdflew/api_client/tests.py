@@ -4,8 +4,9 @@ when you run "manage.py test".
 
 Replace this with more appropriate tests for your application.
 """
-
-from django.test import TestCase
+from django.core.urlresolvers import reverse
+from django.contrib.sites.models import Site
+from django.test import TestCase, Client
 from api_client import utils
 from lxml import etree
 
@@ -60,3 +61,28 @@ class ClientTest(TestCase):
         self.assertTrue(children[0].tag == 'url')
         self.assertTrue(children[1].tag == 'url')
         self.assertTrue(isinstance(children[0], etree._Element))
+        
+        
+    def test_get_url(self):
+        test_client = Client()
+        request = test_client.get(reverse('api_lookupurls'))
+        c = utils.ClientParser()
+        tree = c.get_tree_from_file(StringIO(request.content))
+        root = c.get_root_from_tree(tree)
+        children = c.get_url_from_root(root)
+        self.assertTrue(len(children) == 2)
+        self.assertTrue(children[0].tag == 'url')
+        self.assertTrue(children[1].tag == 'url')
+        self.assertTrue(isinstance(children[0], etree._Element))
+                
+    def test_get_url_2(self):
+        c = utils.ClientParser()
+        file = c.get_url_as_file("http://%s/%s" % (Site.objects.get_current(), reverse('api_lookupurls')))
+        tree = c.get_tree_from_file(file)
+        root = c.get_root_from_tree(tree)
+        children = c.get_url_from_root(root)
+        self.assertTrue(len(children) == 2)
+        self.assertTrue(children[0].tag == 'url')
+        self.assertTrue(children[1].tag == 'url')
+        self.assertTrue(isinstance(children[0], etree._Element))        
+        

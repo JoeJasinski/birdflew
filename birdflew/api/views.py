@@ -9,6 +9,7 @@ from django.conf import settings
 from django.views.generic.base import View
 
 from bcore.models import UrlModel
+from bcore.forms import UrlForm
 
 from lxml import etree
 from lxml.builder import ElementMaker 
@@ -20,15 +21,23 @@ def prepxml(xml, status):
     response['Content-Disposition'] = 'inline; filename=test.xml'
     return response
 
+def messagexml(message, type="error"):
+
+    E = ElementMaker()
+    MESSAGE = E.message
+    if type == 'success':
+        SUCCESS = E.success
+        xml = MESSAGE(SUCCESS(message))
+    else:
+        ERROR = E.error
+        xml = MESSAGE(ERROR(message)) 
+    return xml   
+
 
 class BlankView(View):
     
     def _xml_error(self, message):
-        E = ElementMaker()
-        MESSAGE = E.message  
-        ERROR = E.error
-        xml = MESSAGE(ERROR(message))
-        return etree.tostring(xml)
+        return etree.tostring(messagexml(message))
         
     
     def get(self, request, *args, **kwargs):
@@ -61,13 +70,16 @@ class registerurlsView(BlankView):
 
     def post(self, request, *args, **kwargs):
     
-        url_list = ['10.0.0.1','10.0.0.2',]
-    
-        E = ElementMaker()
-        URLS = E.urls
-        URL = E.url
+        form = UrlForm(data=request.POST)
+        if form.is_valid():
+            form
+            url_list = ['10.0.0.1','10.0.0.2',]
+            num_added = len(url_list)
+            xml = messagexml("Added %s Records" % (num_added))
+        else:
+            xml = messagexml('Error with form validation')
+        
         status=201
-        xml = URLS(*map(lambda x: URL(x), url_list))
         return prepxml(etree.tostring(xml), status)
 
 

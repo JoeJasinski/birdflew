@@ -74,4 +74,4 @@ class registerurlsView(BlankView):
 class whoamiView(BlankView):
 
     def get(self, request, *args, **kwargs):
-         return HttpResponse("joe.jasinski+dp@gmail.com", status=200)
+         return HttpResponse(setting.WHOAMI, status=200)

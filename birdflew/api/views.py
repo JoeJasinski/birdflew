@@ -9,7 +9,7 @@ from django.conf import settings
 from django.views.generic.base import View
 
 from bcore.models import UrlModel
-from bcore.forms import UrlForm
+from api.forms import RawUrlForm
 
 from lxml import etree
 from lxml.builder import ElementMaker 
@@ -57,7 +57,7 @@ class lookupurlsView(BlankView):
 
     def get(self, request, *args, **kwargs):
     
-        url_list = UrlModel.objects.all()
+        url_list = UrlModel.objects.values('url')
         E = ElementMaker()
         URLS = E.urls
         URL = E.url
@@ -70,7 +70,7 @@ class registerurlsView(BlankView):
 
     def post(self, request, *args, **kwargs):
     
-        form = UrlForm(data=request.POST)
+        form = RawUrlForm(data=request.POST)
         if form.is_valid():
             form
             url_list = ['10.0.0.1','10.0.0.2',]

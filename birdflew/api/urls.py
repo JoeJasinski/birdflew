@@ -1,15 +1,16 @@
 from django.conf.urls.defaults import patterns, include, url
+from django.views.decorators.csrf import csrf_exempt
 from . import views
 
 version_one_url = patterns('',
 
-    url(r'^lookupurls/$', views.lookupurlsView.as_view(), {}, 
+    url(r'^lookupurls/$', csrf_exempt(views.lookupurlsView.as_view()), {}, 
        name='api_lookupurls'),
 
-    url(r'^registerurls/$', views.registerurlsView.as_view(), {}, 
+    url(r'^registerurls/$', csrf_exempt(views.registerurlsView.as_view()), {}, 
        name='api_registerurls'),
 
-    url(r'^whoami/$', views.whoamiView.as_view(), {'emitter_format':'xml', }, 
+    url(r'^whoami/$', csrf_exempt(views.whoamiView.as_view()), {'emitter_format':'xml', }, 
        name='api_whoami'),
 
 #    url(r'^logs/$', logs_handler, {'emitter_format':'xml', }, 

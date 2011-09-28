@@ -8,6 +8,7 @@ from django.contrib.sites.models import Site
 from django.conf import settings
 from django.views.generic.base import View
 
+
 from bcore.models import UrlModel
 from api.forms import RawUrlForm
 
@@ -70,14 +71,18 @@ class registerurlsView(BlankView):
 
     def post(self, request, *args, **kwargs):
     
-        form = RawUrlForm(data=request.POST)
+        form = RawUrlForm(data=request.raw_post_data)
         if form.is_valid():
-            form
-            url_list = ['10.0.0.1','10.0.0.2',]
+            url_list = form.cleaned_data.get('urls')
+            for u in url_list:
+                url_model = UrlModel(url=u)
+                url_model.save()
+                
             num_added = len(url_list)
             xml = messagexml("Added %s Records" % (num_added))
         else:
             xml = messagexml('Error with form validation')
+            print form.errors
         
         status=201
         return prepxml(etree.tostring(xml), status)

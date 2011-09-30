@@ -6,7 +6,7 @@ ENV_SETTINGS="birdflew.settings"
 PID_FILE="${VIRTUAL_ENV}/run/fcgi.pid"
 OUTLOG_FILE="${VIRTUAL_ENV}/log/fcgi_out.log"
 ERRLOG_FILE="${VIRTUAL_ENV}/log/fcgi_err.log"
-SOCKET_FILE="${VIRTUAL_ENV}/run/${ENV_NAME}.socket"
+SOCKET_FILE="${VIRTUAL_ENV}/run/django.socket"
 export PYTHONPATH="$PYTHONPATH:${VIRTUAL_ENV}/proj/:${VIRTUAL_ENV}/proj/${MAIN_MODULE}/"
 
 if [ -f "$PID_FILE" ]

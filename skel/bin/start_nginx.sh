@@ -16,5 +16,5 @@ then
 fi
 
 echo "Starting Nginx..."
-nginx -c ${VIRTUAL_ENV}/etc/nginx/nginx.conf >  ${VIRTUAL_ENV}/var/log/nginx_start.log 2>&1
-echo "Started Nginx: PID " `cat ${VIRTUAL_ENV}/var/run/nginx.pid`
+nginx -c ${VIRTUAL_ENV}/etc/nginx/nginx.conf >  ${VIRTUAL_ENV}/log/nginx_start.log 2>&1
+echo "Started Nginx: PID " `cat ${VIRTUAL_ENV}/run/nginx.pid`

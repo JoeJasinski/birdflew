@@ -5,7 +5,7 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 PROJECT_ROOT = os.path.dirname(__file__)
-ENVIRONMENT_ROOT = os.path.join(PROJECT_ROOT, '..', '..', 'data')
+ENVIRONMENT_ROOT = os.path.join(PROJECT_ROOT, '..', '..', )
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
@@ -18,7 +18,7 @@ WHOAMI='joe.jasinski+dp@gmail.com'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': os.path.join(ENVIRONMENT_ROOT,'test.db'),                      # Or path to database file if using sqlite3.
+        'NAME': os.path.join(ENVIRONMENT_ROOT,'data', 'test.db'),                      # Or path to database file if using sqlite3.
         'USER': '',                      # Not used with sqlite3.
         'PASSWORD': '',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
@@ -62,7 +62,7 @@ MEDIA_URL = ''
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = ''
+STATIC_ROOT = os.path.join(ENVIRONMENT_ROOT, 'htdocs', 'static')
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"

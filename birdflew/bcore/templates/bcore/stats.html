@@ -1,0 +1,67 @@
+<style>
+.box-list { 
+  font-size: 11px; 
+  background-color: #F2F2F2; 
+  padding: 0px; 
+  border: solid 1px #999; 
+  width: 400px;
+}
+.box-list .body-list { 
+  padding: 2px; 
+  font-size: 11px; 
+}
+.box-list .head-list { 
+  vertical-align: bottom; 
+  text-align: left;  
+} 
+.box-list .head-list a { 
+  text-decoration: none; 
+  color: #001e4b; 
+  font-weight:bold;  
+}
+.box-list .head-list th { 
+  padding: 4px 8px;  
+  border-bottom: solid 1px #ccc; 
+  border-right: solid 1px #ccc;
+  font-weight: normal; 
+  background: #fff ; 
+  font-size: 12px; 
+  text-align: left;
+  vertical-align: middle;
+} 
+.cont-name {
+  width: 30%;
+}
+.box-list th { 
+  height: 10px; }
+ 
+.box-list td { 
+  padding: 8px;  
+} 
+.box-list .rowa {
+  background-color: #f2f2f2; 
+  vertical-align: top; 
+  font-size: 12px; 
+}
+.box-list .rowb {
+  background-color: #dadce1; 
+  vertical-align: top; 
+  font-size: 12px; 
+}
+</style>
+
+Cached: {{ from_cache }}
+
+
+<table cellspacing="0" class="box-list">
+  <tbody><tr class="head-list">
+    <th class="con_url_head">Connection URL</th>
+    <th class="con_url_created">First Seen</th>
+  </tr>
+{% for url in urls %}
+  <tr class="body-list {% cycle "rowa" "rowb" %}">
+    <td class="con_url"><a href="http://{{ url.url }}">{{ url.url }}</a></td>
+    <td class="con_created">Created {{ url.created }}</td>
+  </tr>
+{% endfor %}
+</tbody></table>

@@ -43,16 +43,16 @@ class BlankView(View):
         
     
     def get(self, request, *args, **kwargs):
-        return HttpResponse(self._xml_error('Method not allowed'), status=405)
+        return prepxml(self._xml_error('Method not allowed'), status=405)
 
     def post(self, request, *args, **kwargs):
-        return HttpResponse(self._xml_error('Method not allowed'), status=405)
+        return prepxml(self._xml_error('Method not allowed'), status=405)
 
     def put(self, request, *args, **kwargs):
-        return HttpResponse(self._xml_error('Method not allowed'), status=405)
+        return prepxml(self._xml_error('Method not allowed'), status=405)
 
     def delete(self, request, *args, **kwargs):
-        return HttpResponse(self._xml_error('Method not allowed'), status=405)
+        return prepxml(self._xml_error('Method not allowed'), status=405)
 
 
 class lookupurlsView(BlankView):

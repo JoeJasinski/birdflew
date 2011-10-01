@@ -67,6 +67,8 @@ Cached: {{ from_cache }}
     <td class="con_url"><a href="http://{{ url.url }}{% url api_whoami %}">{{ url.url }}</a> &nbsp;&nbsp;[<a href="http://{{ url.url }}{% url api_lookupurls %}">List</a>]</td>
     <td class="con_created">Created {{ url.created }}</td>
   </tr>
+{% empty %}
+  <tr><td colspan="2">No Hosts Identified</td></tr>
 {% endfor %}
 </tbody></table>
 

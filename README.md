@@ -23,7 +23,7 @@ ENVIORNMENT SETUP
 DETAIL SERVER SETUP
 Create Amazon instance using AMI: ebs/ubuntu-images/ubuntu-natty-11.04-i386-server-20110426 (ami-06ad526f)
 
-
+``
 ssh -i xxxxxx.pem ubuntu@ec2-xxxxxxxxxxx.compute-1.amazonaws.com
 sudo adduser joe 
 sudo usermod -G admin -a joe
@@ -61,3 +61,4 @@ ln -s /sites/p2p/proj/skel/bin/start_nginx.sh
 ln -s /sites/p2p/proj/skel/bin/start_fastcgi.sh
 sudo ./start_nginx.sh 
 ./start_fastcgi.sh
+``

@@ -130,6 +130,9 @@ INSTALLED_APPS = (
     'api_client',
 )
 
+DEFAULT_CACHE_TIMEOUT = 300
+
+
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
 # the site admins on every HTTP 500 error.

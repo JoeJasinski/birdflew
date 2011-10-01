@@ -7,7 +7,8 @@ from django.contrib.gis.measure import D
 from django.contrib.sites.models import Site
 from django.conf import settings
 from django.views.generic.base import View
-
+from django.core.cache import cache
+from django.db.models import signals
 
 from bcore.models import UrlModel
 from api.forms import RawUrlForm
@@ -57,14 +58,22 @@ class BlankView(View):
 class lookupurlsView(BlankView):
 
     def get(self, request, *args, **kwargs):
-    
-        url_list = UrlModel.objects.values('url')
-        E = ElementMaker()
-        URLS = E.urls
-        URL = E.url
-        status=200
-        xml = URLS(*map(lambda x: URL(x), url_list))
-        return prepxml(etree.tostring(xml), status)
+        url_response = cache.get('api_lookupuurlsView')
+        if not url_response:
+            url_list = UrlModel.objects.values('url')
+            E = ElementMaker()
+            URLS = E.urls
+            URL = E.url
+            status=200
+            xml = URLS(*map(lambda x: URL(x), url_list))
+            url_response = prepxml(etree.tostring(xml), status)
+            cache.set('api_lookupuurlsView', url_response, settings.DEFAULT_CACHE_TIMEOUT)
+
+        return url_response
+
+def del_api_lookupuurlsView(sender, instance, **kwargs):
+    cache.delete('api_lookupuurlsView')
+signals.post_save.connect(del_api_lookupuurlsView)
 
 
 class registerurlsView(BlankView):

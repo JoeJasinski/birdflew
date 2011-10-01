@@ -7,7 +7,6 @@ from django.contrib.gis.measure import D
 from django.contrib.sites.models import Site
 from django.conf import settings
 from django.core.cache import cache
-from django.dispatch import dispatcher
 from django.db.models import signals
 from . import models
 
@@ -15,7 +14,7 @@ def stats(request, template_name=""):
     urls = cache.get('dcore_stats_urls', None)
     if not urls:    
         urls = models.UrlModel.objects.all()
-        cache.set('dcore_stats_urls', urls, 300)
+        cache.set('dcore_stats_urls', urls, settings.DEFAULT_CACHE_TIMEOUT)
         from_cache = False
     else:
         from_cache = True

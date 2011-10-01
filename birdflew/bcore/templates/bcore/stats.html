@@ -1,3 +1,6 @@
+{% extends "base.html" %}
+
+{% block extra_head %}{{ block.super }}
 <style>
 .box-list { 
   font-size: 11px; 
@@ -39,19 +42,20 @@
   padding: 8px;  
 } 
 .box-list .rowa {
-  background-color: #f2f2f2; 
+  background-color: #ddffdd; 
   vertical-align: top; 
   font-size: 12px; 
 }
 .box-list .rowb {
-  background-color: #dadce1; 
+  background-color: #bbffbb; 
   vertical-align: top; 
   font-size: 12px; 
 }
 </style>
+{% endblock extra_head %}
 
+{% block content %}
 Cached: {{ from_cache }}
-
 
 <table cellspacing="0" class="box-list">
   <tbody><tr class="head-list">
@@ -65,3 +69,4 @@ Cached: {{ from_cache }}
   </tr>
 {% endfor %}
 </tbody></table>
+{% endblock content %}

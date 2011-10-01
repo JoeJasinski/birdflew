@@ -1,0 +1,20 @@
+{% extends "base_site.html" %}
+{% load i18n %}
+
+{% block base_layout %}
+<div class="body">
+ <div class="banner">
+        <div class="wrap">
+        <div class=menu></div>
+         <h1><a href="/">{{ site.name }}</a></h1>
+    </div>
+ </div>
+ <div class="content">
+   <div class="wrap">
+{% block content %}{% endblock content %}
+   </div>
+ </div>
+</div>
+
+{% endblock base_layout %}
+

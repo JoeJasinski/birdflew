@@ -16,3 +16,7 @@ class UrlModel(TrackingMixin):
     
     def __unicode__(self):
         return self.url
+
+
+    class Meta:
+        ordering = ('url', 'created', )

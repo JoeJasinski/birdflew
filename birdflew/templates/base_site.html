@@ -1,0 +1,22 @@
+{% comment %}
+This Page is to store all site-level imports and meta data.
+It only contains a block for the base layout and header/footer blocks
+{% endcomment %}<!DOCTYPE html>
+<html>
+<head>
+ <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+ <meta name="title" content="Birdflew"> 
+ <meta name="description" content=""> 
+ <meta name="author" content="joe jasinski"> 
+ <meta name="keywords" content="p2p, connect, share, file"> 
+ <meta name="language" content="en-us"> 
+
+ <title>Birdflew {% block title %} - Home{% endblock %}</title>
+ {% block extra_head %}
+ {% endblock extra_head %}
+</head>
+<body>
+  {% block base_layout %}{% endblock %}
+</body>
+{% block extra_foot  %}{% endblock extra_foot %}
+</html>

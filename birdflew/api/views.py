@@ -100,4 +100,4 @@ class registerurlsView(BlankView):
 class whoamiView(BlankView):
 
     def get(self, request, *args, **kwargs):
-         return HttpResponse(setting.WHOAMI, status=200)
+         return HttpResponse(settings.WHOAMI, status=200)

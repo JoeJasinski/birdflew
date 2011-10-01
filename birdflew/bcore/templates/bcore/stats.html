@@ -64,9 +64,35 @@ Cached: {{ from_cache }}
   </tr>
 {% for url in urls %}
   <tr class="body-list {% cycle "rowa" "rowb" %}">
-    <td class="con_url"><a href="http://{{ url.url }}">{{ url.url }}</a></td>
+    <td class="con_url"><a href="http://{{ url.url }}{% url api_whoami %}">{{ url.url }}</a> &nbsp;&nbsp;[<a href="http://{{ url.url }}{% url api_lookupurls %}">List</a>]</td>
     <td class="con_created">Created {{ url.created }}</td>
   </tr>
 {% endfor %}
 </tbody></table>
+
+<BR>
+
+<table cellspacing="0" class="box-list">
+  <tbody><tr class="head-list">
+    <th class="api_url_head">API URL</th>
+    <th class="api_method_head">REQUEST METHODS</th>
+  </tr>
+  
+  <tr class="body-list {% cycle "rowa" "rowb" %}">
+    <td class="api_url"><a href="{% url api_whoami %}">{% url api_whoami %}</a></td>
+    <td class="api_method">GET</td>
+  </tr>
+
+  <tr class="body-list {% cycle "rowa" "rowb" %}">
+    <td class="api_url"><a href="{% url api_lookupurls %}">{% url api_lookupurls %}</a></td>
+    <td class="api_method">GET</td>
+  </tr>
+
+  <tr class="body-list {% cycle "rowa" "rowb" %}">
+    <td class="api_url"><a href="{% url api_registerurls %}">{% url api_registerurls %}</a></td>
+    <td class="api_method">POST</td>
+  </tr>
+
+</tbody></table>
+
 {% endblock content %}

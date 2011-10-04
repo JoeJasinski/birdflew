@@ -1,4 +1,5 @@
 import re
+from urlparse import urlparse
 from django import forms 
 from . import validators
 from lxml import etree
@@ -31,7 +32,7 @@ class RawUrlForm(object):
         if not self.errors:
             relax =  validators.input_message_spec_relaxing()
             result = relax.validate(radx)
-            if not relax:
+            if not result:
                 self.errors.append(relax.error_log)
  
         if not self.errors:
@@ -39,7 +40,7 @@ class RawUrlForm(object):
                 url_nodes = map(lambda x: x.text, radx.xpath('/urls/*'))
             except Exception, e:
                 self.errors.append(e.exc_info())
-        
+                
         if not self.errors:
             if not reduce(lambda y, z: y & z, map(lambda x: bool(x), url_nodes)):
                 self.errors.append('urls must not contain null values')
@@ -48,7 +49,34 @@ class RawUrlForm(object):
             url_nodes = map(lambda x: self.clean_url(x), url_nodes)  
         
         if not self.errors:
+            parsed_url_nodes = []
+            for url_node in url_nodes:
+                
+                # normalize the output
+                m = re.compile('^http[s]?://')
+                if not m.match(url_node):
+                    url_node = "http://%s" % url_node
+                    
+                up = urlparse(url_node)
+                domain = up.hostname
+      
+                port = None
+                if not domain:
+                    self.errors.append("No hostname given.")
+                    break
+                try:
+                    port = up.port
+                except ValueError:
+                    self.errors.append("Improper port given.")
+                    break
+                if not port:
+                    port = 80
+            
+                parsed_url_nodes.append((domain, port))
+
+        if not self.errors:
             self.cleaned_data = {}
+            self.cleaned_data['url_pieces'] = parsed_url_nodes 
             self.cleaned_data['urls'] = url_nodes 
 
         return not bool(self.errors)

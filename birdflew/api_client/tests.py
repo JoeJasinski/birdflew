@@ -8,6 +8,7 @@ from django.core.urlresolvers import reverse
 from django.contrib.sites.models import Site
 from django.test import TestCase, Client
 from api_client import utils
+from api.forms import RawUrlForm
 from lxml import etree
 
 from bcore.models import UrlModel
@@ -33,15 +34,17 @@ class ClientTest(TestCase):
     def setUp(self):
         self.xml = """<?xml version="1.0" encoding="UTF-8" ?>
             <urls>
-              <url>192.168.0.1</url>
-              <url>127.0.0.1</url>
+              <url>%s</url>
+              <url>%s</url>
             </urls>"""
+        
+        self.xml_urls = ('192.168.0.1','127.0.0.1')
         
         UrlModel(url="192.168.0.1:80").save()
         UrlModel(url="10.10.0.1:80").save()        
         
 
-        self.xml_file = StringIO(self.xml)
+        self.xml_file = StringIO(self.xml % self.xml_urls)
     
     def test_get_tree_from_file(self):
         c = utils.ClientParser()
@@ -79,7 +82,58 @@ class ClientTest(TestCase):
         self.assertTrue(children[0].tag == 'url')
         self.assertTrue(children[1].tag == 'url')
         self.assertTrue(isinstance(children[0], etree._Element))
-                
+    
+    
+    def test_forms_1(self):
+        form = RawUrlForm(data=self.xml % self.xml_urls)
+        self.assertTrue(form.is_valid())
+        self.assertTrue(hasattr(form, 'cleaned_data'))
+        self.assertEqual(
+            form.cleaned_data.get('urls',''), list(self.xml_urls) )
+
+
+    def test_forms_2(self):
+        test_urls = ("http://192.168.0.9:80","localhost")
+        form = RawUrlForm(data=self.xml % test_urls)
+        self.assertTrue(form.is_valid())
+        self.assertTrue(hasattr(form, 'cleaned_data'))
+        self.assertEqual(
+            form.cleaned_data.get('urls',''), list(test_urls) )
+
+
+    def test_forms_3(self):
+        test_urls = ("http://192.168.0.9:80/","localhost")
+        form = RawUrlForm(data=self.xml % test_urls)
+        self.assertTrue(form.is_valid())
+        self.assertTrue(hasattr(form, 'cleaned_data'))
+        self.assertEqual(
+            form.cleaned_data.get('urls',''), list(test_urls) )
+
+
+    def test_forms_4(self):
+        test_urls = ("http://192.168.0.9:80/","local host")
+        form = RawUrlForm(data=self.xml % test_urls)
+        self.assertTrue(not form.is_valid())
+        self.assertTrue(not hasattr(form, 'cleaned_data'))
+        self.assertEqual(len(form.errors), 1)
+
+
+    def test_forms_4(self):
+        test_urls = ("http://192.168.0.9: 80/","local host")
+        form = RawUrlForm(data=self.xml % test_urls)
+        self.assertTrue(not form.is_valid())
+        self.assertTrue(not hasattr(form, 'cleaned_data'))
+        self.assertEqual(len(form.errors), 2)
+
+
+    def test_forms_4(self):
+        test_urls = ("http://192.1()68.0.9:80/","local*&^@!host")
+        form = RawUrlForm(data=self.xml % test_urls)
+        self.assertTrue(not form.is_valid())
+        self.assertTrue(not hasattr(form, 'cleaned_data'))
+        self.assertEqual(len(form.errors), 1)
+        
+
 #    def test_get_url_2(self):
 #        c = utils.ClientParser()
 #        file = c.get_url_as_file("http://%s/%s" % (Site.objects.get_current(), reverse('api_lookupurls')))

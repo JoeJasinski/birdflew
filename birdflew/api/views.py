@@ -3,7 +3,6 @@ from django.template import RequestContext, loader, Context
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, HttpResponse
-from django.contrib.gis.measure import D
 from django.contrib.sites.models import Site
 from django.conf import settings
 from django.views.generic.base import View
@@ -67,7 +66,8 @@ class lookupurlsView(BlankView):
             URLS = E.urls
             URL = E.url
             status=200
-            xml = URLS(*map(lambda x: URL(x), url_list))
+            
+            xml = URLS(*map(lambda x: URL(x['url']), url_list))
             url_response = prepxml(etree.tostring(xml), status)
             cache.set('api_lookupuurlsView', url_response, settings.DEFAULT_CACHE_TIMEOUT)
 

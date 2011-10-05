@@ -1,5 +1,6 @@
 from urllib2 import Request, urlopen, URLError, HTTPError
 from lxml import etree
+from api import validators
 
 try:
     from cStringIO import StringIO
@@ -23,7 +24,7 @@ class ClientParser(object):
             print "URL Error:",e.reason , url
             
         return neighbor_file
-    
+        
     
     def get_tree_from_file(self, neighbor_file):
         tree = etree.parse(neighbor_file)
@@ -36,9 +37,20 @@ class ClientParser(object):
         return root.getchildren()
     
     def get_neighbors_urls(self, url_socket):
-        
-        url = "%s/lookupurls/" % url_socket 
-        neighbor_file = self.get_url_as_file(url)
-        tree = self.get_tree_from_file(neighbor_file)
-        root = self.get_root_from_tree(tree)
+        """ START PARSING HERE """
+        root = None
+        valid, messages = validators.validate_url_chars(url_socket)
+        if not messages:
+            url, domain, port, messages_loc = validators.validate_url_format(url_socket)
+            messages = messages + messages_loc
+        if not messages:
+            try:
+                url = "%s/v1/lookupurls/" % url_socket 
+                neighbor_file = self.get_url_as_file(url)
+                tree = self.get_tree_from_file(neighbor_file)
+                root = self.get_root_from_tree(tree)
+            except Exception, e:
+                messages.append(e.message)
+        return root, messages
+            
         

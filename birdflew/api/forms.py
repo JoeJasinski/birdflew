@@ -1,8 +1,7 @@
 import re
-from urlparse import urlparse
+from lxml import etree
 from django import forms 
 from . import validators
-from lxml import etree
 
 class RawUrlForm(object):
         
@@ -11,14 +10,12 @@ class RawUrlForm(object):
         self.errors = []
 
     def clean_url(self, url):
-        """ Needs implementation """
-        if not url:
-            self.errors.append("URL cannot be blank.")
-            url = ""
-        m = re.compile('^[a-zA-Z0-9:._\-+/]+$')
-        match = m.match(url)
-        if not match:
-            self.errors.append("Invalid url input.")
+        
+        clean, messages = validators.validate_url_chars(url)
+
+        if not clean:
+            self.errors = self.errors + messages
+            url = ''
         return url
 
     def is_valid(self):
@@ -39,7 +36,7 @@ class RawUrlForm(object):
             try:
                 url_nodes = map(lambda x: x.text, radx.xpath('/urls/*'))
             except Exception, e:
-                self.errors.append(e.exc_info())
+                self.errors.append(e.message)
                 
         if not self.errors:
             if not reduce(lambda y, z: y & z, map(lambda x: bool(x), url_nodes)):
@@ -50,27 +47,11 @@ class RawUrlForm(object):
         
         if not self.errors:
             parsed_url_nodes = []
-            for url_node in url_nodes:
-                
-                # normalize the output
-                m = re.compile('^http[s]?://')
-                if not m.match(url_node):
-                    url_node = "http://%s" % url_node
-                    
-                up = urlparse(url_node)
-                domain = up.hostname
-      
-                port = None
-                if not domain:
-                    self.errors.append("No hostname given.")
-                    break
-                try:
-                    port = up.port
-                except ValueError:
-                    self.errors.append("Improper port given.")
-                    break
-                if not port:
-                    port = 80
+            for url_node in url_nodes:                
+                url, domain, port, messages = validators.validate_url_format(url_node)
+
+                if messages:
+                    self.errors = self.errors + messages
             
                 parsed_url_nodes.append((domain, port))
 
@@ -78,5 +59,5 @@ class RawUrlForm(object):
             self.cleaned_data = {}
             self.cleaned_data['url_pieces'] = parsed_url_nodes 
             self.cleaned_data['urls'] = url_nodes 
-
-        return not bool(self.errors)
+        
+        return (not bool(self.errors))

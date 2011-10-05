@@ -60,6 +60,15 @@ class ClientTest(TestCase):
         tree = c.get_tree_from_file(self.xml_file)
         self.assertTrue(tree, etree._Element)
 
+
+    def test_get_neighbors_urls(self):
+        c = utils.ClientParser()
+        root, messages = c.get_neighbors_urls('http://localhost:8000/v1/lookupurls/')
+        self.assertTrue(root == None)
+        print messages
+        self.assertTrue(messages)
+        
+
     def test_get_root_from_tree(self):
         c = utils.ClientParser()
         tree = c.get_tree_from_file(self.xml_file)
@@ -129,7 +138,7 @@ class ClientTest(TestCase):
         self.assertEqual(len(form.errors), 1)
 
 
-    def test_forms_4(self):
+    def test_forms_5(self):
         test_urls = ("http://192.168.0.9: 80/","local host")
         form = RawUrlForm(data=self.xml % test_urls)
         self.assertTrue(not form.is_valid())
@@ -137,26 +146,26 @@ class ClientTest(TestCase):
         self.assertEqual(len(form.errors), 2)
 
 
-    def test_forms_4(self):
+    def test_forms_6(self):
         test_urls = ("http://192.1()68.0.9:80/","local*&^@!host")
         form = RawUrlForm(data=self.xml % test_urls)
         self.assertTrue(not form.is_valid())
         self.assertTrue(not hasattr(form, 'cleaned_data'))
         self.assertEqual(len(form.errors), 1)
         
-    def test_forms_5(self):
+    def test_forms_7(self):
         form = RawUrlForm(data=self.xml2 % self.xml_urls)
         self.assertTrue(not form.is_valid())
         self.assertTrue(not hasattr(form, 'cleaned_data'))
         self.assertEqual(len(form.errors), 1)
 
-    def test_forms_6(self):
+    def test_forms_8(self):
         form = RawUrlForm(data='' )
         self.assertTrue(not form.is_valid())
         self.assertTrue(not hasattr(form, 'cleaned_data'))
         self.assertEqual(len(form.errors), 1)
 
-    def test_forms_7(self):
+    def test_forms_9(self):
         form = RawUrlForm(data='<response />' )
         self.assertTrue(not form.is_valid())
         self.assertTrue(not hasattr(form, 'cleaned_data'))

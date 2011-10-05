@@ -9,6 +9,8 @@ from django.conf import settings
 from django.views.generic.base import View
 from django.core.cache import cache
 from django.db.models import signals
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 
 from bcore.models import UrlModel
 from api.forms import RawUrlForm
@@ -78,6 +80,7 @@ signals.post_save.connect(del_api_lookupuurlsView)
 
 class registerurlsView(BlankView):
 
+    @method_decorator(csrf_exempt)
     def post(self, request, *args, **kwargs):
     
         form = RawUrlForm(data=request.raw_post_data)
@@ -90,7 +93,7 @@ class registerurlsView(BlankView):
             num_added = len(url_list)
             xml = messagexml("Added %s Records" % (num_added))
         else:
-            xml = messagexml('Error with form validation')
+            xml = messagexml('Error with form validation: %s' % form.errors)
             print form.errors
         
         status=201

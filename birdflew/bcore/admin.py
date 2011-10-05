@@ -1,7 +1,8 @@
 from django.contrib import admin
+from mptt.admin import MPTTModelAdmin
 from .models import UrlModel
 
-class UrlModelAdmin(admin.ModelAdmin):
+class UrlModelAdmin(MPTTModelAdmin):
     list_display = ['url','created','modified']
     
 

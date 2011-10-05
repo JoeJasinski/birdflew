@@ -1,3 +1,4 @@
+from mptt.models import MPTTModel
 from django.db import models
 from django.core.cache import cache
 
@@ -10,8 +11,9 @@ class TrackingMixin(models.Model):
         abstract = True
 
 
-class UrlModel(TrackingMixin):
+class UrlModel(MPTTModel, TrackingMixin):
     
+    parent = models.ForeignKey('self', blank=True, null=True, related_name='children')
     url = models.CharField(max_length=255)
     
     def __unicode__(self):

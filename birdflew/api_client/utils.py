@@ -34,12 +34,12 @@ class ClientParser(object):
         class BaseURL(): pass
 
         messages = []
-        url, domain, port = None, None, None
+        domain, port = None, None
         valid, messages = validators.validate_url_chars(url_socket)
         burl = BaseURL()
         if not messages:
-            url, domain, port, messages_loc = validators.validate_url_format(url_socket)
-        burl.url = url
+            url_socket, domain, port, messages_loc = validators.validate_url_format(url_socket)
+        burl.url_socket = url_socket
         burl.domain = domain
         burl.port = port
             
@@ -52,16 +52,18 @@ class ClientParser(object):
         url_socket = url_socket.rstrip("/")
 
         burl, messages = self.validate_base_url(url_socket)
+        
         if not messages:
             try:
-                url = "%s%s" % (url_socket, reverse('api_lookupurls') )
+                url = "%s%s" % (burl.url_socket, reverse('api_lookupurls') )
                 neighbor_file = self.get_url_as_file(url)
                 form = RawUrlForm(data=neighbor_file.read())
                 if form.is_valid():
+                    parent = UrlModel.objects.get_or_create(url=burl.url_socket)
                     url_list = form.cleaned_data.get('urls')
                     for u in url_list:
-                        url_model = UrlModel(url=u)
-                        url_model.save()
+                        url_model, created = UrlModel.objects.get_or_create(url=u, 
+                                defaults={'parent':parent})
                 else:
                     messages = messages + form.errors
 

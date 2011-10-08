@@ -3,7 +3,7 @@ from mptt.admin import MPTTModelAdmin
 from .models import UrlModel
 
 class UrlModelAdmin(MPTTModelAdmin):
-    list_display = ['url','created','modified']
+    list_display = ['url','parent','created','modified']
     
 
 admin.site.register(UrlModel, UrlModelAdmin)

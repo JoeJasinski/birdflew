@@ -4,6 +4,8 @@ from optparse import make_option
 from twisted.internet import task
 from twisted.internet import reactor
 
+from api_client import utils
+
 DEFAULT_CHECK_INTERVAL=500
 
 
@@ -29,16 +31,17 @@ class Command(BaseCommand):
 
         print "Running every %s seconds." % interval
         
-        def runIntervalSecond(*args, **kw):
-            interval = kw.get('interval')
-            print "%s seconds have passed" % (interval)
+        #def runIntervalSecond(*args, **kw):
+        #    interval = kw.get('interval')
+        #    print "%s seconds have passed" % (interval)
         
+        c = utils.ClientParser()
         
         kw = {'interval':interval}
-        l = task.LoopingCall(runIntervalSecond, *args, **kw)
+        l = task.LoopingCall(c.process, *args, **kw)
         l.start(interval)
         
-     
+        
         reactor.run()
         
  

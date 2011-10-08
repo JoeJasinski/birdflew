@@ -16,8 +16,8 @@ class ClientParser(object):
     def get_url_as_file(self, url):
         
         neighbor_file = None
-    
-        req = Request(url)
+
+        req = Request(url, timetout=5)
     
         try:
             response = urlopen(req)
@@ -28,6 +28,17 @@ class ClientParser(object):
             print "URL Error:",e.reason , url
             
         return neighbor_file
+
+    def get_urls_to_check(self):
+        urls = UrlModel.objects.values_list('url', flat=True)
+        return urls
+    
+    
+    def process(self, *args, **kwargs):
+        urls_to_check = self.get_urls_to_check()
+        print urls_to_check
+        for url_socket in urls_to_check:
+            self.get_neighbors_urls(url_socket)
     
     def validate_base_url(self, url_socket):
 

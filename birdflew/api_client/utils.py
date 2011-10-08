@@ -1,13 +1,16 @@
 from urllib2 import Request, urlopen, URLError, HTTPError
 from lxml import etree
 from api import validators
-from django.core.urlresolvers import reverse
 
 try:
     from cStringIO import StringIO
 except ImportError:
     from StringIO import StringIO
 
+from django.core.urlresolvers import reverse
+from django.core.cache import cache
+from django.db.models import signals
+from django.conf import settings
 from bcore.models import UrlModel
 from api.forms import RawUrlForm
 
@@ -30,7 +33,10 @@ class ClientParser(object):
         return neighbor_file
 
     def get_urls_to_check(self):
-        urls = UrlModel.objects.values_list('url', flat=True)
+        urls = cache.get('api_client_urls_to_check', None)
+        if not urls:
+            urls = UrlModel.objects.values_list('url', flat=True)
+            cache.set('api_client_urls_to_check', urls, settings.DEFAULT_CACHE_TIMEOUT)
         return urls
     
     
@@ -81,7 +87,9 @@ class ClientParser(object):
             except Exception, e:
                 messages.append(e.message)
 
-        
         return root, messages
             
-        
+
+def del_api_client_urls_to_check(sender, instance, **kwargs):
+    cache.delete('api_client_urls_to_check')
+signals.post_save.connect(api_client_urls_to_check)        

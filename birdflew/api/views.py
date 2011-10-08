@@ -87,8 +87,7 @@ class registerurlsView(BlankView):
         if form.is_valid():
             url_list = form.cleaned_data.get('urls')
             for u in url_list:
-                url_model = UrlModel(url=u)
-                url_model.save()
+                url_model, created = UrlModel.objects.get_or_create(url=u,)
                 
             num_added = len(url_list)
             xml = messagexml("Added %s Records" % (num_added))

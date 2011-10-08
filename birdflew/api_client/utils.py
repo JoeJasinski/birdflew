@@ -10,6 +10,7 @@ except ImportError:
 from django.core.urlresolvers import reverse
 from django.core.cache import cache
 from django.db.models import signals
+from django.dispatch import receiver
 from django.conf import settings
 from bcore.models import UrlModel
 from api.forms import RawUrlForm
@@ -89,7 +90,8 @@ class ClientParser(object):
 
         return root, messages
             
-
+            
+@receiver(signals.post_save, sender=UrlModel)
 def del_api_client_urls_to_check(sender, instance, **kwargs):
     cache.delete('api_client_urls_to_check')
-signals.post_save.connect(del_api_client_urls_to_check)        
+     

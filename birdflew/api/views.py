@@ -8,6 +8,7 @@ from django.conf import settings
 from django.views.generic.base import View
 from django.core.cache import cache
 from django.db.models import signals
+from django.dispatch import receiver
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 
@@ -73,9 +74,12 @@ class lookupurlsView(BlankView):
 
         return url_response
 
+
+ 
+@receiver(signals.post_save, sender=UrlModel)
 def del_api_lookupuurlsView(sender, instance, **kwargs):
     cache.delete('api_lookupuurlsView')
-signals.post_save.connect(del_api_lookupuurlsView)
+
 
 
 class registerurlsView(BlankView):

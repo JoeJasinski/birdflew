@@ -19,6 +19,9 @@ class UrlModel(MPTTModel, TrackingMixin):
     def __unicode__(self):
         return self.url
 
+    def save(self, *args, **kwargs):
+        self.url = self.url.rstrip("/")
+        super(self.__class__, self).save(*args, **kwargs)
 
     class Meta:
         ordering = ('url', 'created', )

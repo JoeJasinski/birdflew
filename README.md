@@ -61,3 +61,10 @@ Create Amazon instance using AMI: ebs/ubuntu-images/ubuntu-natty-11.04-i386-serv
     ln -s /sites/p2p/proj/skel/bin/start_fastcgi.sh
     sudo ./start_nginx.sh 
     ./start_fastcgi.sh
+
+
+Running the client service. 
+
+    cd /sites/p2p/bin/
+    . ./bin/activate
+    ./manage.py bf_run_client -i 500

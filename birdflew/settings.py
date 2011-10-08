@@ -4,6 +4,11 @@ import os
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
+try:
+    from bfsettings.local_settings_pre import *
+except ImportError:
+    pass
+
 PROJECT_ROOT = os.path.dirname(__file__)
 ENVIRONMENT_ROOT = os.path.join(PROJECT_ROOT, '..', '..', )
 
@@ -157,3 +162,9 @@ LOGGING = {
         },
     }
 }
+
+
+try:
+    from bfsettings.local_settings_post import *
+except ImportError:
+    pass

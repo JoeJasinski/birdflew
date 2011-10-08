@@ -1,6 +1,9 @@
 from django.core.management.base import BaseCommand, CommandError
 from optparse import make_option
 
+from twisted.internet import task
+from twisted.internet import reactor
+
 DEFAULT_CHECK_INTERVAL=500
 
 
@@ -22,5 +25,20 @@ class Command(BaseCommand):
             interval = int(interval)
         except ValueError:
             raise ValueError("Interval must be an integer.")
+
+
+        print "Running every %s seconds." % interval
         
-        print "Running every %s seconds." % interval 
+        def runIntervalSecond(*args, **kw):
+            interval = kw.get('interval')
+            print "%s seconds have passed" % (interval)
+        
+        
+        kw = {'interval':interval}
+        l = task.LoopingCall(runIntervalSecond, *args, **kw)
+        l.start(interval)
+        
+     
+        reactor.run()
+        
+ 

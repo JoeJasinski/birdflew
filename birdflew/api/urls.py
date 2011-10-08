@@ -4,11 +4,11 @@ from . import views
 
 version_one_url = patterns('',
 
-    url(r'^lookupurls/$', csrf_exempt(views.lookupurlsView.as_view()), 
+    url(r'^lookupUrls/$', csrf_exempt(views.lookupurlsView.as_view()), 
         {}, 
         name='api_lookupurls'),
 
-    url(r'^registerurls/$', csrf_exempt(views.registerurlsView.as_view()), 
+    url(r'^registerUrls/$', csrf_exempt(views.registerurlsView.as_view()), 
         {}, 
         name='api_registerurls'),
 

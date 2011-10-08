@@ -92,4 +92,4 @@ class ClientParser(object):
 
 def del_api_client_urls_to_check(sender, instance, **kwargs):
     cache.delete('api_client_urls_to_check')
-signals.post_save.connect(api_client_urls_to_check)        
+signals.post_save.connect(del_api_client_urls_to_check)        

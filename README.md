@@ -92,9 +92,10 @@ Create Amazon instance using AMI: ebs/ubuntu-images/ubuntu-natty-11.04-i386-serv
     cd ${VIRTUAL_ENV}/bin/
     ln -s ${VIRTUAL_ENV}/proj/skel/bin/start_nginx.sh
     ln -s ${VIRTUAL_ENV}/proj/skel/bin/start_fastcgi.sh
+    ln -s ${VIRTUAL_ENV}/proj/skel/bin/start_twisted.sh
     sudo ./start_nginx.sh 
     sudo -u p2p ./start_fastcgi.sh
-
+    sudo -u p2p ./start_twisted.sh
 
 Running the client service. 
 

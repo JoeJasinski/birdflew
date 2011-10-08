@@ -164,6 +164,13 @@ LOGGING = {
 }
 
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'birdflew'
+    }
+}
+
 try:
     from bfsettings.local_settings_post import *
 except ImportError:

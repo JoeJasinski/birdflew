@@ -25,7 +25,7 @@ def validate_url_chars(url):
     if not messages:
         m = re.compile('^[a-zA-Z0-9:._\-+/]+$')
         match = m.match(url)
-        if not match:
+        if not match:         
             messages.append("Invalid URL characters.")
 
     return (not bool(messages), messages)
@@ -38,20 +38,27 @@ def validate_url_format(url):
     m = re.compile('^http[s]?://')
     if not m.match(url):
         url = "http://%s" % url
-        
-    up = urlparse(url)
+    
+    try:
+        up = urlparse(url)
+    except ValueError:
+        messages.append("Improper port value. Must be an integer. ")
     domain = up.hostname
     
     if not domain:
         messages.append("No hostname given.")
 
-    port = None
-    try:
-        port = up.port
-    except ValueError:
-        messages.append("Improper port given.")
-    
-    if not port:
-        port = 80
+    if not messages:
+        port = None
+
+        try:
+            port = int(up.port)
+        except ValueError:
+            pass    
+        except TypeError:
+            pass
+        
+        if not port:
+            port = 80
     
     return (url, domain, port, messages)

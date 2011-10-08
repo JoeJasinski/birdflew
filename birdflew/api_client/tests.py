@@ -31,6 +31,19 @@ class SimpleTest(TestCase):
 
 class ClientTest(TestCase):
     
+    class ClientParserTester(utils.ClientParser):
+        
+        def __init__(self, xml, *args, **kwargs):
+            self.xml = xml 
+            super(self.__class__, self).__init__(*args, **kwargs)
+          
+    
+        def get_url_as_file(self, url): 
+
+            neighbor_file = StringIO(self.xml)       
+            return neighbor_file    
+    
+    
     def setUp(self):
         self.xml = """<?xml version="1.0" encoding="UTF-8" ?>
             <urls>
@@ -55,50 +68,44 @@ class ClientTest(TestCase):
         self.xml_file = StringIO(self.xml % self.xml_urls)
         self.xml_file2 = StringIO(self.xml2 % self.xml_urls)
     
-    def test_get_tree_from_file(self):
-        c = utils.ClientParser()
-        tree = c.get_tree_from_file(self.xml_file)
-        self.assertTrue(tree, etree._Element)
 
 
     def test_get_neighbors_urls(self):
         c = utils.ClientParser()
-        root, messages = c.get_neighbors_urls('http://localhost:8000/v1/lookupurls/')
-        self.assertTrue(root == None)
-        print messages
-        self.assertTrue(messages)
-        
-
-    def test_get_root_from_tree(self):
-        c = utils.ClientParser()
-        tree = c.get_tree_from_file(self.xml_file)
-        root = c.get_root_from_tree(tree)
-        self.assertEqual(root.tag, 'urls')
-        self.assertTrue(root, etree._Element)
+        root, messages = c.get_neighbors_urls('http://localhost:8000/')
+        self.assertTrue(not messages)
 
 
-    def test_get_url_from_root(self):
+    def test_get_neighbors_urls(self):
         c = utils.ClientParser()
-        tree = c.get_tree_from_file(self.xml_file)
-        root = c.get_root_from_tree(tree)
-        children = c.get_url_from_root(root)
-        self.assertTrue(len(children) == 2)
-        self.assertTrue(children[0].tag == 'url')
-        self.assertTrue(children[1].tag == 'url')
-        self.assertTrue(isinstance(children[0], etree._Element))
+        burl, messages = c.validate_base_url('http://192.168.9.1')
+        self.assertTrue(not messages)
+        burl, messages = c.validate_base_url('http://192.168.9.1:8000')
+        self.assertTrue(not messages)
+        self.assertEqual(burl.port, 8000)
+        burl, messages = c.validate_base_url('http://192.168.9.1: 80')
+        self.assertTrue(messages)        
+        burl, messages = c.validate_base_url('http://192.168.9.1:a80')
+        self.assertTrue(not messages)
+        self.assertEqual(burl.port, 80)
+        burl, messages = c.validate_base_url('192.168.9.1:80')
+        self.assertTrue(not messages)     
+        burl, messages = c.validate_base_url('www.google.com:80')
+        self.assertTrue(not messages)  
+        burl, messages = c.validate_base_url('www. google.com:80')
+        self.assertTrue(messages) 
         
+
+    def test_get_neighborhood_urls2(self):
+        c = self.ClientParserTester(xml=self.xml % self.xml_urls)
+        root, messages = c.get_neighbors_urls('http://localhost:8000/')
+        self.assertTrue(not messages)        
         
-    def test_get_url(self):
-        test_client = Client()
-        request = test_client.get(reverse('api_lookupurls'))
-        c = utils.ClientParser()
-        tree = c.get_tree_from_file(StringIO(request.content))
-        root = c.get_root_from_tree(tree)
-        children = c.get_url_from_root(root)
-        self.assertTrue(len(children) == 2)
-        self.assertTrue(children[0].tag == 'url')
-        self.assertTrue(children[1].tag == 'url')
-        self.assertTrue(isinstance(children[0], etree._Element))
+
+    def test_get_neighborhood_urls2(self):
+        c = self.ClientParserTester(xml=self.xml2 % self.xml_urls)
+        root, messages = c.get_neighbors_urls('http://localhost:8000/')
+        self.assertTrue(messages)  
     
     
     def test_forms_1(self):
@@ -171,14 +178,4 @@ class ClientTest(TestCase):
         self.assertTrue(not hasattr(form, 'cleaned_data'))
         self.assertEqual(len(form.errors), 1)
 
-#    def test_get_url_2(self):
-#        c = utils.ClientParser()
-#        file = c.get_url_as_file("http://%s/%s" % (Site.objects.get_current(), reverse('api_lookupurls')))
-#        tree = c.get_tree_from_file(file)
-#        root = c.get_root_from_tree(tree)
-#        children = c.get_url_from_root(root)
-#        self.assertTrue(len(children) == 2)
-#        self.assertTrue(children[0].tag == 'url')
-#        self.assertTrue(children[1].tag == 'url')
-#        self.assertTrue(isinstance(children[0], etree._Element))        
-#        
+   

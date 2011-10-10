@@ -65,7 +65,7 @@ def validate_url_format(url):
         if not port:
             port = 80
     
-    url = "%s%s:%s" % (up.schema, domain, port)
+    url = "%s%s:%s" % (up.scheme, domain, port)
     
     return (url, domain, port, messages)
 

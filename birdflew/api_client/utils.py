@@ -15,13 +15,16 @@ from django.conf import settings
 from bcore.models import UrlModel
 from api.forms import RawUrlForm
 
+import socket
+
+
 class ClientParser(object):
 
     def get_url_as_file(self, url):
         
         neighbor_file = None
-
-        req = Request(url, timetout=5)
+        socket.setdefaulttimeout(10)
+        req = Request(url)
     
         try:
             response = urlopen(req)
@@ -77,7 +80,7 @@ class ClientParser(object):
                 neighbor_file = self.get_url_as_file(url)
                 form = RawUrlForm(data=neighbor_file.read())
                 if form.is_valid():
-                    parent = UrlModel.objects.get_or_create(url=burl.url_socket)
+                    parent, created = UrlModel.objects.get_or_create(url=burl.url_socket)
                     url_list = form.cleaned_data.get('urls')
                     for u in url_list:
                         url_model, created = UrlModel.objects.get_or_create(url=u, 

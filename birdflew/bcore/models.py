@@ -1,6 +1,7 @@
 from mptt.models import MPTTModel
 from django.db import models
 from django.core.cache import cache
+from api import validators
 
 class TrackingMixin(models.Model):
 
@@ -20,7 +21,8 @@ class UrlModel(MPTTModel, TrackingMixin):
         return self.url
 
     def save(self, *args, **kwargs):
-        self.url = self.url.rstrip("/")
+        url, domain, port, messages = validators.validate_url_format(self.url)
+        self.url = url
         super(self.__class__, self).save(*args, **kwargs)
 
     class Meta:

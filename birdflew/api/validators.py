@@ -40,9 +40,12 @@ def validate_url_format(url):
     domain = ""
     port = ""
     m = re.compile('^http[s]?://')
+
+    url = url.rstrip("/")
+    
     if not m.match(url):
         url = "http://%s" % url
-    
+        
     try:
         up = urlparse(url)
     except ValueError:
@@ -65,8 +68,8 @@ def validate_url_format(url):
         if not port:
             port = 80
     
-    url = "%s%s:%s" % (up.scheme, domain, port)
-    
+    url = u"%s://%s:%s" % (up.scheme, domain, port)
+
     return (url, domain, port, messages)
 
 

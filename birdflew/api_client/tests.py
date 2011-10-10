@@ -112,7 +112,7 @@ class ClientTest(TestCase):
         
         c = utils.ClientParser()
         urls = c.get_urls_to_check()
-        self.assertEqual(set(['192.168.0.1:80','10.10.0.1:80']), set(urls))
+        self.assertEqual(set(['http://192.168.0.1:80','http://10.10.0.1:80']), set(urls))
     
     
     def test_forms_1(self):

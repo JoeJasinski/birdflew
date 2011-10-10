@@ -39,7 +39,7 @@ class ClientParser(object):
     def get_urls_to_check(self):
         urls = cache.get('api_client_urls_to_check', None)
         if not urls:
-            urls = UrlModel.objects.values_list('url', flat=True)
+            urls = list(set(UrlModel.objects.values_list('url', flat=True)))
             cache.set('api_client_urls_to_check', urls, settings.DEFAULT_CACHE_TIMEOUT)
         return urls
     

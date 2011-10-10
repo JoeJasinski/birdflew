@@ -64,7 +64,7 @@ Cached: {{ from_cache }}
   </tr>
 {% for url in urls %}
   <tr class="body-list {% cycle "rowa" "rowb" %}">
-    <td class="con_url"><a href="http://{{ url.url }}{% url api_whoami %}">{{ url.url }}</a> &nbsp;&nbsp;[<a href="http://{{ url.url }}{% url api_lookupurls %}">List</a>]</td>
+    <td class="con_url"><a href="{{ url.url }}{% url api_whoami %}">{{ url.url }}</a> &nbsp;&nbsp;[<a href="http://{{ url.url }}{% url api_lookupurls %}">List</a>]</td>
     <td class="con_created">Created {{ url.created }}</td>
   </tr>
 {% empty %}

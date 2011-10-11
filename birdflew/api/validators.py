@@ -14,6 +14,15 @@ input_message_spec = """<element name="urls" xmlns="http://relaxng.org/ns/struct
 </element>
 """
 
+class BaseURL(object): 
+    
+    def __init__(self, *args, **kwargs):
+        self.url_socket = kwargs.get('url_socket','')
+        self.port = kwargs.get('port','')
+        self.domain = kwargs.get('domain','')
+     
+
+
 def input_message_spec_relaxing():
     xml = etree.fromstring(input_message_spec)
     return etree.RelaxNG(xml)
@@ -70,7 +79,9 @@ def validate_url_format(url):
     
     url = u"%s://%s:%s" % (up.scheme, domain, port)
 
-    return (url, domain, port, messages)
+    burl = BaseURL(url_socket=url, domain=domain, port=port) 
+
+    return (burl, messages)
 
 
 class RateLimitDecorator(object):

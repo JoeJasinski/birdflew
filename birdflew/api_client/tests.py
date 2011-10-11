@@ -8,6 +8,7 @@ from django.core.urlresolvers import reverse
 from django.contrib.sites.models import Site
 from django.test import TestCase, Client
 from api_client import utils
+from api_client.utils import TransferException
 from api.forms import RawUrlForm
 from lxml import etree
 
@@ -72,7 +73,7 @@ class ClientTest(TestCase):
 
     def test_get_neighbors_urls(self):
         c = utils.ClientParser()
-        root, messages = c.get_neighbors_urls('http://localhost:8000/')
+        messages = c.get_neighbors_urls('http://localhost:8000/')
         self.assertTrue(not messages)
 
 
@@ -83,28 +84,26 @@ class ClientTest(TestCase):
         burl, messages = c.validate_base_url('http://192.168.9.1:8000')
         self.assertTrue(not messages)
         self.assertEqual(burl.port, 8000)
-        burl, messages = c.validate_base_url('http://192.168.9.1: 80')
-        self.assertTrue(messages)        
-        burl, messages = c.validate_base_url('http://192.168.9.1:a80')
+        self.assertRaises(TransferException, c.validate_base_url, 'http://192.168.9.1: 80')     
+        burl, message = c.validate_base_url('http://192.168.9.1:a80')
         self.assertTrue(not messages)
         self.assertEqual(burl.port, 80)
         burl, messages = c.validate_base_url('192.168.9.1:80')
         self.assertTrue(not messages)     
         burl, messages = c.validate_base_url('www.google.com:80')
         self.assertTrue(not messages)  
-        burl, messages = c.validate_base_url('www. google.com:80')
-        self.assertTrue(messages) 
+        self.assertRaises(TransferException, c.validate_base_url, 'www. google.com:80')
         
 
     def test_get_neighborhood_urls2(self):
         c = self.ClientParserTester(xml=self.xml % self.xml_urls)
-        root, messages = c.get_neighbors_urls('http://localhost:8000/')
+        messages = c.get_neighbors_urls('http://localhost:8000/')
         self.assertTrue(not messages)        
         
 
     def test_get_neighborhood_urls2(self):
         c = self.ClientParserTester(xml=self.xml2 % self.xml_urls)
-        root, messages = c.get_neighbors_urls('http://localhost:8000/')
+        messages = c.get_neighbors_urls('http://localhost:8000/')
         self.assertTrue(messages)  
     
     
@@ -120,7 +119,7 @@ class ClientTest(TestCase):
         self.assertTrue(form.is_valid())
         self.assertTrue(hasattr(form, 'cleaned_data'))
         self.assertEqual(
-            form.cleaned_data.get('urls',''), list(self.xml_urls) )
+            form.cleaned_data.get('urls',''), list(map(lambda x: "http://%s:80" % x, self.xml_urls)) )
 
 
     def test_forms_2(self):
@@ -129,7 +128,7 @@ class ClientTest(TestCase):
         self.assertTrue(form.is_valid())
         self.assertTrue(hasattr(form, 'cleaned_data'))
         self.assertEqual(
-            form.cleaned_data.get('urls',''), list(test_urls) )
+            form.cleaned_data.get('urls',''), ["http://192.168.0.9:80","http://localhost:80"] )
         self.assertEqual(form.cleaned_data.get('url_pieces'),
                          [('192.168.0.9', 80), ('localhost', 80)])
 
@@ -139,7 +138,7 @@ class ClientTest(TestCase):
         self.assertTrue(form.is_valid())
         self.assertTrue(hasattr(form, 'cleaned_data'))
         self.assertEqual(
-            form.cleaned_data.get('urls',''), list(test_urls) )
+            form.cleaned_data.get('urls',''), ["http://192.168.0.9:80","http://localhost:80"] )
         self.assertEqual(form.cleaned_data.get('url_pieces'),
                          [('192.168.0.9', 80), ('localhost', 80)])
 

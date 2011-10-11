@@ -46,18 +46,21 @@ class RawUrlForm(object):
             url_nodes = map(lambda x: self.clean_url(x), url_nodes)  
         
         if not self.errors:
-            parsed_url_nodes = []
+            cleaned_url_pices = []
+            cleaned_urls = []
             for url_node in url_nodes:                
-                url, domain, port, messages = validators.validate_url_format(url_node)
+                burl, messages = validators.validate_url_format(url_node)
 
                 if messages:
                     self.errors = self.errors + messages
+                else:
+                    cleaned_urls.append(burl.url_socket)
             
-                parsed_url_nodes.append((domain, port))
+                cleaned_url_pices.append((burl.domain, burl.port))
 
         if not self.errors:
             self.cleaned_data = {}
-            self.cleaned_data['url_pieces'] = parsed_url_nodes 
-            self.cleaned_data['urls'] = url_nodes 
+            self.cleaned_data['url_pieces'] = cleaned_url_pices 
+            self.cleaned_data['urls'] = cleaned_urls 
         
         return (not bool(self.errors))

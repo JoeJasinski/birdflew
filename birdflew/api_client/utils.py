@@ -15,7 +15,15 @@ from django.conf import settings
 from bcore.models import UrlModel
 from api.forms import RawUrlForm
 
-import socket
+import socket, urllib2
+
+class TransferException(Exception):
+    
+    def __init__(self, messages=[], *args, **kwargs):
+        super(self.__class__, self).__init__(*args, **kwargs)
+        self.messages = messages
+
+
 
 
 class ClientParser(object):
@@ -30,9 +38,11 @@ class ClientParser(object):
             response = urlopen(req)
             neighbor_file = StringIO(response.read())
         except HTTPError, e:
-            print "HTTP Error:",e.code , url
+            #print "HTTP Error:",e.code , url
+            raise
         except URLError, e:
-            print "URL Error:",e.reason , url
+            #print "URL Error:",e.reason , url
+            raise 
             
         return neighbor_file
 
@@ -45,53 +55,53 @@ class ClientParser(object):
     
     
     def process(self, *args, **kwargs):
+        messages = []
         urls_to_check = self.get_urls_to_check()
-        print urls_to_check
         for url_socket in urls_to_check:
-            self.get_neighbors_urls(url_socket)
+            messages_loc = self.get_neighbors_urls(url_socket)
+            print messages_loc
     
     def validate_base_url(self, url_socket):
 
-        class BaseURL(): pass
-
-        messages = []
-        domain, port = None, None
         valid, messages = validators.validate_url_chars(url_socket)
-        burl = BaseURL()
-        if not messages:
-            url_socket, domain, port, messages_loc = validators.validate_url_format(url_socket)
-        burl.url_socket = url_socket
-        burl.domain = domain
-        burl.port = port
+        if messages:
+            raise TransferException(messages=messages)  
+
+        burl, messages_loc = validators.validate_url_format(url_socket)
+        messages = messages + messages_loc
+        if messages:
+            raise TransferException(messages=messages)             
             
         return burl, messages
         
     
     def get_neighbors_urls(self, url_socket):
         """ START PARSING HERE """
-        root = None
-        url_socket = url_socket.rstrip("/")
-
-        burl, messages = self.validate_base_url(url_socket)
+        messages = []
         
-        if not messages:
-            try:
-                url = "%s%s" % (burl.url_socket, reverse('api_lookupurls') )
-                neighbor_file = self.get_url_as_file(url)
-                form = RawUrlForm(data=neighbor_file.read())
-                if form.is_valid():
-                    parent, created = UrlModel.objects.get_or_create(url=burl.url_socket)
-                    url_list = form.cleaned_data.get('urls')
-                    for u in url_list:
-                        url_model, created = UrlModel.objects.get_or_create(url=u, 
-                                defaults={'parent':parent})
-                else:
-                    messages = messages + form.errors
+        try:
+            burl, messages = self.validate_base_url(url_socket)
+            url = "%s%s" % (burl.url_socket, reverse('api_lookupurls') )
+            neighbor_file = self.get_url_as_file(url)
+            form = RawUrlForm(data=neighbor_file.read())
+            if form.is_valid():
+                parent, created = UrlModel.objects.get_or_create(url=burl.url_socket)
+                url_list = form.cleaned_data.get('urls')
+                for u in url_list:
+                    url_model, created = UrlModel.objects.get_or_create(url=u, 
+                            defaults={'parent':parent})
+            else:
+                messages = messages + form.errors
+        except TransferException, e:
+            messages = messages + e.messages     
+        except urllib2.HTTPError,e :
+             messages.append(e.message) 
+        except urllib2.URLError, e:     
+             messages.append(e.message) 
+        #except Exception, e:
+        #    messages.append(e.message)
 
-            except Exception, e:
-                messages.append(e.message)
-
-        return root, messages
+        return messages
             
             
 @receiver(signals.post_save, sender=UrlModel)

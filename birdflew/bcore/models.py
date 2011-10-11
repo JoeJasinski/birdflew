@@ -15,14 +15,14 @@ class TrackingMixin(models.Model):
 class UrlModel(MPTTModel, TrackingMixin):
     
     parent = models.ForeignKey('self', blank=True, null=True, related_name='children')
-    url = models.CharField(max_length=255)
+    url = models.CharField(max_length=255,)
     
     def __unicode__(self):
         return self.url
 
     def save(self, *args, **kwargs):
-        url, domain, port, messages = validators.validate_url_format(self.url)
-        self.url = url
+        burl, messages = validators.validate_url_format(self.url)
+        self.url = burl.url_socket
         super(self.__class__, self).save(*args, **kwargs)
 
     class Meta:

@@ -103,7 +103,7 @@ class ClientTest(TestCase):
 
     def test_get_neighborhood_urls2(self):
         c = self.ClientParserTester(xml=self.xml2 % self.xml_urls)
-        messages = c.get_neighbors_urls('http://localhost:8000/')
+        messages = c.get_neighbors_urls('http://localhost:8000/', 1)
         self.assertTrue(messages)  
     
     
@@ -111,7 +111,7 @@ class ClientTest(TestCase):
         
         c = utils.ClientParser()
         urls = c.get_urls_to_check()
-        self.assertEqual(set(['http://192.168.0.1:80','http://10.10.0.1:80']), set(urls))
+        self.assertEqual(set([('http://192.168.0.1:80', 1), ('http://10.10.0.1:80',2)]), set(urls))
     
     
     def test_forms_1(self):

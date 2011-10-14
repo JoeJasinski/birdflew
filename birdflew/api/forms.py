@@ -24,14 +24,15 @@ class RawUrlForm(object):
         try:
             radx = etree.fromstring(self.raw_data)
         except Exception, e:
-            self.errors.append(e)
+            self.errors.append(e.message)
+    
     
         if not self.errors:
             relax =  validators.input_message_spec_relaxing()
             result = relax.validate(radx)
             if not result:
                 self.errors.append(relax.error_log)
- 
+
         if not self.errors:
             try:
                 url_nodes = map(lambda x: x.text, radx.xpath('/urls/*'))

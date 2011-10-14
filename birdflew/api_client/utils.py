@@ -39,8 +39,9 @@ class ClientParser(object):
             neighbor_file = StringIO(response.read())
         except HTTPError, e:
             #print "HTTP Error:",e.code , url
-            raise
+            raise 
         except URLError, e:
+            print "URL ERROR"
             #print "URL Error:",e.reason , url
             raise 
             
@@ -49,7 +50,7 @@ class ClientParser(object):
     def get_urls_to_check(self):
         urls = cache.get('api_client_urls_to_check', None)
         if not urls:
-            urls = list(set(UrlModel.objects.values_list('url', flat=True)))
+            urls = list(set(UrlModel.objects.values_list('url', 'id')))
             cache.set('api_client_urls_to_check', urls, settings.DEFAULT_CACHE_TIMEOUT)
         return urls
     
@@ -57,8 +58,8 @@ class ClientParser(object):
     def process(self, *args, **kwargs):
         messages = []
         urls_to_check = self.get_urls_to_check()
-        for url_socket in urls_to_check:
-            messages_loc = self.get_neighbors_urls(url_socket)
+        for url_socket, id in urls_to_check:
+            messages_loc = self.get_neighbors_urls(url_socket, id)
             print messages_loc
     
     def validate_base_url(self, url_socket):
@@ -75,10 +76,10 @@ class ClientParser(object):
         return burl, messages
         
     
-    def get_neighbors_urls(self, url_socket):
+    def get_neighbors_urls(self, url_socket, id):
         """ START PARSING HERE """
         messages = []
-        
+        print "URL (%s) %s" % (id, url_socket)
         try:
             burl, messages = self.validate_base_url(url_socket)
             url = "%s%s" % (burl.url_socket, reverse('api_lookupurls') )
@@ -95,9 +96,9 @@ class ClientParser(object):
         except TransferException, e:
             messages = messages + e.messages     
         except urllib2.HTTPError,e :
-             messages.append(e.message) 
+             messages.append("Returned Http code %s" % e.code) 
         except urllib2.URLError, e:     
-             messages.append(e.message) 
+             messages.append("%s" % e.reason) 
         #except Exception, e:
         #    messages.append(e.message)
 

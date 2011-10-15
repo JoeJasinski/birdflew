@@ -14,6 +14,7 @@ from django.utils.decorators import method_decorator
 
 from bcore.models import UrlModel
 from api.forms import RawUrlForm
+from api import validators 
 
 from lxml import etree
 from lxml.builder import ElementMaker 
@@ -43,22 +44,26 @@ class BlankView(View):
     def _xml_error(self, message):
         return etree.tostring(messagexml(message))
         
-    
+    @method_decorator(validators.RateLimitDecorator)
     def get(self, request, *args, **kwargs):
         return prepxml(self._xml_error('Method not allowed'), status=405)
 
+    @method_decorator(validators.RateLimitDecorator)
     def post(self, request, *args, **kwargs):
         return prepxml(self._xml_error('Method not allowed'), status=405)
 
+    @method_decorator(validators.RateLimitDecorator)
     def put(self, request, *args, **kwargs):
         return prepxml(self._xml_error('Method not allowed'), status=405)
 
+    @method_decorator(validators.RateLimitDecorator)
     def delete(self, request, *args, **kwargs):
         return prepxml(self._xml_error('Method not allowed'), status=405)
 
 
 class lookupurlsView(BlankView):
-
+    
+    @method_decorator(validators.RateLimitDecorator)
     def get(self, request, *args, **kwargs):
         url_response = cache.get('api_lookupuurlsView')
         if not url_response:
@@ -75,16 +80,15 @@ class lookupurlsView(BlankView):
         return url_response
 
 
- 
 @receiver(signals.post_save, sender=UrlModel)
 def del_api_lookupuurlsView(sender, instance, **kwargs):
     cache.delete('api_lookupuurlsView')
 
 
-
 class registerurlsView(BlankView):
 
     @method_decorator(csrf_exempt)
+    @method_decorator(validators.RateLimitDecorator)
     def post(self, request, *args, **kwargs):
     
         form = RawUrlForm(data=request.raw_post_data)
@@ -105,5 +109,6 @@ class registerurlsView(BlankView):
 
 class whoamiView(BlankView):
 
+    @method_decorator(validators.RateLimitDecorator)
     def get(self, request, *args, **kwargs):
          return HttpResponse(settings.WHOAMI, status=200)

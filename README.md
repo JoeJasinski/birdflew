@@ -67,6 +67,10 @@ Create Amazon instance using AMI: ebs/ubuntu-images/ubuntu-natty-11.04-i386-serv
     mkdir data/redis/ 
     mkdir log/redis/
     git clone git@github.com:DePaulSE560/jasinskij.git proj; cd proj
+    
+    # weird hack needed to compile hiredis on ubuntu 11.04
+    ln -s . local
+    
     pip install -r requirements.pip
     cd birdflew
 

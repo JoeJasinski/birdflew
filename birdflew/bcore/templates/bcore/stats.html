@@ -7,7 +7,7 @@
   background-color: #F2F2F2; 
   padding: 0px; 
   border: solid 1px #999; 
-  width: 650px;
+  width: 800px;
 }
 .box-list .body-list { 
   padding: 2px; 
@@ -88,12 +88,16 @@ Cached: {{ from_cache }}
     <th class="con_url_head">Connection URL</th>
     <th class="con_url_created">First Seen</th>
     <th class="con_url_learned">Learned From</th>
+    <th class="con_errorcount">Error Count</th>
+    <th class="con_errorcount">Previous Error</th>
   </tr>
 {% for url in urls %}
   <tr class="body-list {% cycle "rowa" "rowb" %}">
     <td class="con_url"><a href="{{ url.url }}{% url api_whoami %}">{{ url.url }}</a> &nbsp;&nbsp;[<a href="{{ url.url }}{% url api_lookupurls %}">List</a>]</td>
     <td class="con_created">Created {{ url.created }}</td>
     <td class="con_learned">{{ url.parent }}</td>
+    <td class="con_errorcount">{{ url.get_errorcount }}</td>
+    <th class="con_errorcount">{{ url.get_errormessage }}</th>
   </tr>
 {% empty %}
   <tr><td colspan="2">No Hosts Identified</td></tr>

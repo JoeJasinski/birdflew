@@ -27,3 +27,12 @@ class UrlModel(MPTTModel, TrackingMixin):
 
     class Meta:
         ordering = ('url', 'created', )
+
+    def get_errorcount(self):
+        count = cache.get("error_count_url_%s" % self.id, 0)
+        return count
+            
+    def get_errormessage(self):
+        messages = cache.get("error_message_url_%s" % self.id, '')
+        return messages
+                    

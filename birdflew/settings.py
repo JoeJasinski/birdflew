@@ -137,7 +137,6 @@ INSTALLED_APPS = (
     'api_client',
 )
 
-DEFAULT_CACHE_TIMEOUT = 300
 
 
 # A sample logging configuration. The only tangible logging
@@ -166,10 +165,23 @@ LOGGING = {
 
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'LOCATION': 'birdflew'
-    }
+        'BACKEND': 'redis_cache.RedisCache',
+        'LOCATION': 'localhost:6379',
+        'OPTIONS': {
+            'DB': 1,
+            'PARSER_CLASS': 'redis.connection.HiredisParser'
+        },
+    },
 }
+
+DEFAULT_CACHE_TIMEOUT = 300
+DEFAULT_CACHE_RATE_LIMIT = 30 #600  # rate limit cache timeout
+DEFAULT_MAX_REQUESTS_PER_INTERVAL = 5
+
+DEFAULT_CHECK_INTERVAL=500
+
+# How long errors will be recorded for in the cache
+DEFAULT_CACHE_ERROR_PERSIST = DEFAULT_CHECK_INTERVAL * 10
 
 try:
     from bfsettings.local_settings_post import *

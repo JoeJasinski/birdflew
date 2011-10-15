@@ -3,10 +3,11 @@ from optparse import make_option
 
 from twisted.internet import task
 from twisted.internet import reactor
+from django.conf import settings
 
 from api_client import utils
 
-DEFAULT_CHECK_INTERVAL=500
+
 
 
 class Command(BaseCommand):
@@ -21,7 +22,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         interval = options.get('interval',  )
         if not interval:
-            interval = DEFAULT_CHECK_INTERVAL
+            interval = settings.DEFAULT_CHECK_INTERVAL
 
         try:
             interval = int(interval)

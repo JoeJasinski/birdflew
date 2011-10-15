@@ -61,6 +61,7 @@ class ClientParser(object):
         for url_socket, id in urls_to_check:
             messages_loc = self.get_neighbors_urls(url_socket, id)
             print messages_loc
+
     
     def validate_base_url(self, url_socket):
 
@@ -76,7 +77,7 @@ class ClientParser(object):
         return burl, messages
         
     
-    def get_neighbors_urls(self, url_socket, id):
+    def get_neighbors_urls(self, url_socket, id=None):
         """ START PARSING HERE """
         messages = []
         print "URL (%s) %s" % (id, url_socket)
@@ -91,6 +92,8 @@ class ClientParser(object):
                 for u in url_list:
                     url_model, created = UrlModel.objects.get_or_create(url=u, 
                             defaults={'parent':parent})
+                    cache.delete_many(map(lambda x: x % (id), 
+                            ['error_message_url_%s', 'error_count_url_%s', ]))
             else:
                 messages = messages + form.errors
         except TransferException, e:
@@ -99,8 +102,18 @@ class ClientParser(object):
              messages.append("Returned Http code %s" % e.code) 
         except urllib2.URLError, e:     
              messages.append("%s" % e.reason) 
-        #except Exception, e:
-        #    messages.append(e.message)
+        except Exception, e:
+            messages.append(e.message)
+
+        if messages:
+            key = "error_count_url_%s" % id
+            if cache.get(key, ''):
+                cache.incr(key)
+            else:
+                cache.set(key, 1, settings.DEFAULT_CACHE_ERROR_PERSIST)
+
+            key = "error_message_url_%s" % id
+            cache.set(key, messages, settings.DEFAULT_CACHE_ERROR_PERSIST)
 
         return messages
             

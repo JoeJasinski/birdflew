@@ -37,6 +37,7 @@ Create Amazon instance using AMI: ebs/ubuntu-images/ubuntu-natty-11.04-i386-serv
     sudo aptitude install libxml-dev libxslt-dev 
     sudo aptitude install nginx htop
     sudo aptitude install postgresql  libpq-dev
+    sudo aptitude install redis-server
     
     # create base for site environment
     sudo mkdir /sites/
@@ -63,6 +64,8 @@ Create Amazon instance using AMI: ebs/ubuntu-images/ubuntu-natty-11.04-i386-serv
     cd p2p; . ./bin/activate
     mkdir log var etc run data htdocs
     mkdir etc/django
+    mkdir data/redis/ 
+    mkdir log/redis/
     git clone git@github.com:DePaulSE560/jasinskij.git proj; cd proj
     pip install -r requirements.pip
     cd birdflew
@@ -93,6 +96,9 @@ Create Amazon instance using AMI: ebs/ubuntu-images/ubuntu-natty-11.04-i386-serv
     ln -s ${VIRTUAL_ENV}/proj/skel/bin/start_nginx.sh
     ln -s ${VIRTUAL_ENV}/proj/skel/bin/start_fastcgi.sh
     ln -s ${VIRTUAL_ENV}/proj/skel/bin/start_twisted.sh
+    
+    ln -s  ${VIRTUAL_ENV}/proj/skel/redis/  ${VIRTUAL_ENV}/etc/redis
+    
     sudo ./start_nginx.sh 
     sudo -u p2p ./start_fastcgi.sh
     sudo -u p2p ./start_twisted.sh

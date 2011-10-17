@@ -1,4 +1,4 @@
-import re
+import re, datetime
 from urlparse import urlparse
 from lxml import etree
 from django.core.cache import cache
@@ -95,7 +95,13 @@ class RateLimitDecorator(object):
         # influenced by http://charlesleifer.com/blog/django-patterns-view-decorators/
         request = args[0]
         remote_addr = request.META.get('REMOTE_ADDR')
-        key = '%s.%s' % (remote_addr, request.get_full_path())
+        key = 'throttled_count_%s.%s' % (remote_addr, request.get_full_path())
+        key_date = 'throttled_date_%s.%s' % (remote_addr, request.get_full_path())
+        
+        key_date_value = cache.get(key_date)
+        if key_date_value and key_date_value < datetime.datetime.now():
+            cache.delete_many([key, key_date])
+    
         allow = True
         view_count = cache.get(key, '')
         if view_count:
@@ -109,6 +115,8 @@ class RateLimitDecorator(object):
             allow = True
         
         if not allow:
+            future = datetime.datetime.now() + datetime.timedelta(seconds=settings.DEFAULT_CACHE_RATE_LIMIT)
+            cache.set(key_date, future)
             response = HttpResponse("throttled", status=403, content_type="text/plain")
             response['Content-Disposition'] = 'inline; filename=test.txt'
             return response

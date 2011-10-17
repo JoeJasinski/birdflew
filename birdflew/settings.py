@@ -112,6 +112,8 @@ MIDDLEWARE_CLASSES = (
 )
 
 ROOT_URLCONF = 'birdflew.urls'
+APPEND_SLASH=True
+
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".

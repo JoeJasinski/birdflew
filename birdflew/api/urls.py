@@ -4,15 +4,15 @@ from . import views
 
 version_one_url = patterns('',
 
-    url(r'^lookupUrls/$', csrf_exempt(views.lookupurlsView.as_view()), 
+    url(r'^lookupUrls$', csrf_exempt(views.lookupurlsView.as_view()), 
         {}, 
         name='api_lookupurls'),
 
-    url(r'^registerUrls/$', csrf_exempt(views.registerurlsView.as_view()), 
+    url(r'^registerUrls$', csrf_exempt(views.registerurlsView.as_view()), 
         {}, 
         name='api_registerurls'),
 
-    url(r'^whoami/$', csrf_exempt(views.whoamiView.as_view()), 
+    url(r'^whoami$', csrf_exempt(views.whoamiView.as_view()), 
         {'emitter_format':'xml', }, 
         name='api_whoami'),
 

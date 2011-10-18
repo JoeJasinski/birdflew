@@ -47,3 +47,9 @@
   vertical-align: top; 
   font-size: 12px; 
 }
+
+.con_errormessage {
+ width: 200px;
+ word-wrap: break-word;
+ word-break: break-all;
+}

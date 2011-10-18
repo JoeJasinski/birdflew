@@ -113,7 +113,7 @@ class ClientParser(object):
                 cache.set(key, 1, settings.DEFAULT_CACHE_ERROR_PERSIST)
 
             key = "error_message_url_%s" % id
-            cache.set(key, messages, settings.DEFAULT_CACHE_ERROR_PERSIST)
+            cache.set(key, str(messages), settings.DEFAULT_CACHE_ERROR_PERSIST)
 
         return messages
             

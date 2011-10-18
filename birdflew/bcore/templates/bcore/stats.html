@@ -37,7 +37,7 @@ Cached: {{ from_cache }}
     <th class="con_url_created">First Seen</th>
     <th class="con_url_learned">Learned From</th>
     <th class="con_errorcount">Error Count</th>
-    <th class="con_errorcount">Previous Error</th>
+    <th class="con_errormessage">Previous Error</th>
   </tr>
 {% for url in urls %}
   <tr class="body-list {% cycle "rowa" "rowb" %}">
@@ -45,7 +45,7 @@ Cached: {{ from_cache }}
     <td class="con_created">Created {{ url.created }}</td>
     <td class="con_learned">{{ url.parent }}</td>
     <td class="con_errorcount" bgcolor="#{{ url.get_errorcount|status_color }}">{{ url.get_errorcount }}</td>
-    <th class="con_errorcount">{{ url.get_errormessage }}</th>
+    <th class="con_errormessage">{{ url.get_errormessage }}</th>
   </tr>
 {% empty %}
   <tr><td colspan="2">No Hosts Identified</td></tr>

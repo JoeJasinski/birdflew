@@ -37,7 +37,7 @@ class users_list(BlankView):
             UUID = E.uuid
             status=200
             
-            xml = USERS(*map(lambda x: USER(USERNAME(x.username), UUID('test')), users))
+            xml = USERS(*map(lambda x: USER(USERNAME(x.username), UUID(x.profile.uuid)), users))
             url_response = prepxml(etree.tostring(xml), status)
             cache.set(users_list_cache_key, url_response, settings.DEFAULT_CACHE_TIMEOUT)
 

@@ -27,7 +27,7 @@ class users_list(BlankView):
     @method_decorator(validators.RateLimitDecorator)
     def get(self, request, *args, **kwargs):
         
-        url_response = None #cache.get(users_list_cache_key)
+        url_response = cache.get(users_list_cache_key)
         if not url_response:
             users = User.objects.all()
             E = ElementMaker()

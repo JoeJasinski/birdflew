@@ -29,13 +29,15 @@ class users_list(BlankView):
         
         url_response = cache.get(users_list_cache_key)
         if not url_response:
-            username = User.objects.values('username')
+            users = User.objects.all()
             E = ElementMaker()
-            URLS = E.urls
-            URL = E.url
+            USERS = E.users
+            USER = E.user
+            USERNAME = E.username
+            UUID = E.uuid
             status=200
             
-            xml = URLS(*map(lambda x: URL(x['username']), url_list))
+            xml = USERS(*map(lambda x: USER(USERNAME(x.username), UUID('test')), users))
             url_response = prepxml(etree.tostring(xml), status)
             cache.set(users_list_cache_key, url_response, settings.DEFAULT_CACHE_TIMEOUT)
 

@@ -1,6 +1,8 @@
 from mptt.models import MPTTModel
 from django.db import models
 from django.core.cache import cache
+from django.contrib.auth.models import User
+from django_extensions.db.fields import UUIDField
 from api import validators
 
 class TrackingMixin(models.Model):
@@ -35,4 +37,11 @@ class UrlModel(MPTTModel, TrackingMixin):
     def get_errormessage(self):
         messages = cache.get("error_message_url_%s" % self.id, '')
         return messages
-                    
+
+
+class UserInfo(models.Model):
+    
+    user = models.ForeignKey('auth.User', unique=True)
+    uuid = UUIDField(version=1)        
+    
+User.profile = property(lambda u: UserInfo.objects.get_or_create(user=u)[0])          

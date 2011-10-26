@@ -54,6 +54,8 @@ USE_I18N = True
 # calendars according to the current locale
 USE_L10N = True
 
+AUTH_PROFILE_MODULE = "bcore.UserInfo"
+
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
 MEDIA_ROOT = ''
@@ -131,6 +133,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
+    'django_extensions',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     'mptt',

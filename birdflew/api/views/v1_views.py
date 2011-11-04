@@ -12,7 +12,7 @@ from django.utils.decorators import method_decorator
 from bcore.models import UrlModel
 from api.forms import RawUrlForm
 from api import validators 
-from api.views import BlankView, prepxml
+from api.views import BlankView, prepxml, messagexml
 
 from lxml import etree
 from lxml.builder import ElementMaker 

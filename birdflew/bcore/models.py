@@ -14,10 +14,22 @@ class TrackingMixin(models.Model):
         abstract = True
 
 
+class Comment(TrackingMixin):
+    url = models.ForeignKey('bcore.UrlModel')
+    comment = models.TextField()
+ 
+ 
+class Category(TrackingMixin):
+    url = models.ForeignKey('bcore.UrlModel')
+    category = models.CharField(max_length=20) 
+   
+
 class UrlModel(MPTTModel, TrackingMixin):
     
+    user = models.ForeignKey('auth.User', blank=True, null=True, related_name='user_urls')
     parent = models.ForeignKey('self', blank=True, null=True, related_name='children')
     url = models.CharField(max_length=255,)
+    uuid = UUIDField(version=1)
     
     def __unicode__(self):
         return self.url

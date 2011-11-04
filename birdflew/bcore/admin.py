@@ -4,12 +4,20 @@ from mptt.admin import MPTTModelAdmin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 
-from .models import UrlModel, UserInfo
+from .models import UrlModel, UserInfo, Comment, Category
 
+class CommentInline(admin.StackedInline):
+    model = Comment
+    extra = 0
+
+class CategoryInline(admin.StackedInline):
+    model = Category
+    extra = 0
 
 class UrlModelAdmin(MPTTModelAdmin):
-    list_display = ['url','parent','created','modified']
-    
+    list_display = ['url','user','parent','created','modified']
+    inlines = [CommentInline, CategoryInline]
+    readonly_fields = ['uuid',]
 
 admin.site.register(UrlModel, UrlModelAdmin)
 

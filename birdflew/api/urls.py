@@ -27,9 +27,14 @@ version_two_url = patterns('',
         {}, 
         name='api_users_list'),
 
-    url(r'^users/(?P<username>[-_\w]{1,30})$', csrf_exempt(v2_views.users_detail.as_view()), 
+    url(r'^users/(?P<user>[-_\w.@]{1,30})$', csrf_exempt(v2_views.users_detail.as_view()), 
         {}, 
         name='api_users_detail'),
+
+    url(r'^users/(?P<user>[-_\w.@]{1,30})/urls$', csrf_exempt(v2_views.users_urls.as_view()), 
+        {}, 
+        name='api_users_urls'),
+
 
 )
 

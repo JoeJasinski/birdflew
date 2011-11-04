@@ -1,4 +1,5 @@
 from django.core.urlresolvers import reverse
+from django.core import exceptions
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.sites.models import Site
@@ -14,7 +15,7 @@ from django.contrib.auth.models import User
 
 from bcore.models import UrlModel
 from api import validators 
-from api.views import BlankView, prepxml
+from api.views import BlankView, prepxml, messagexml
 
 from lxml import etree
 from lxml.builder import ElementMaker 
@@ -52,19 +53,73 @@ def del_api_lookupuurlsView(sender, instance, **kwargs):
 class users_detail(BlankView):
 
     @method_decorator(validators.RateLimitDecorator)
-    def get(self, request, *args, **kwargs):
+    def get(self, request, user, *args, **kwargs):
     
-        form = RawUrlForm(data=request.raw_post_data)
-        if form.is_valid():
-            url_list = form.cleaned_data.get('urls')
-            for u in url_list:
-                url_model, created = UrlModel.objects.get_or_create(url=u,)
-                
-            num_added = len(url_list)
-            xml = messagexml("Added %s Records" % (num_added))
+        try:
+            user = User.objects.get(email=user)
+        except exceptions.ObjectDoesNotExist, e:
+             xml = messagexml('Object does not exist')
+             status=404
         else:
-            xml = messagexml('Error with form validation: %s' % form.errors)
-            print form.errors
-        
-        status=201
+            E = ElementMaker()
+            USER = E.user
+            USERNAME = E.username
+            xml = USER(USERNAME(user.username))
+            status=201
+            
         return prepxml(etree.tostring(xml), status)
+
+
+class users_urls(BlankView):
+
+    @method_decorator(validators.RateLimitDecorator)
+    def get(self, request, user, *args, **kwargs):
+    
+        try:
+            user = User.objects.get(email=user)
+        except exceptions.ObjectDoesNotExist, e:
+            xml = messagexml('Object does not exist')
+            status=404
+        else:
+            url_list = user.user_urls.values('url')
+            E = ElementMaker()
+            URLS = E.urls
+            URL = E.url
+            status=200
+            xml = URLS(*map(lambda x: URL(x['url']), url_list))
+            
+        return prepxml(etree.tostring(xml), status)
+    
+    """
+    /v2/users/{alice}/urls/{5}/categories/
+    GET <categories>
+           <category></category>
+           ...
+        </categories
+        
+    PUT - same xml document 
+    
+    
+    def post(self, request, user, *args, **kwargs):
+        POST THIS
+        <url>
+          <url>http://www.google.com</url>
+          <categories>
+            <category></category>?
+          </categories>
+          <comments>
+            <comment></comment>?
+          </comments>
+        <urls>
+        RETURN THIS 
+        - 201 Created
+    """
+
+"""
+class user_subscriptions(self, request, user, *args, **kwargs):
+    8:15 - 8:30+  10/31/2011
+    - add a subscription
+      - give callback URL
+    - remove subscription 
+      -  
+"""

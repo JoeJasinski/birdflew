@@ -28,17 +28,17 @@ class users_list(BlankView):
     @method_decorator(validators.RateLimitDecorator)
     def get(self, request, *args, **kwargs):
         
-        url_response = cache.get(users_list_cache_key)
+        url_response = None #cache.get(users_list_cache_key)
         if not url_response:
             users = User.objects.all()
             E = ElementMaker()
             USERS = E.users
             USER = E.user
-            USERNAME = E.username
+            A = E.a
             UUID = E.uuid
             status=200
             
-            xml = USERS(*map(lambda x: USER(USERNAME(x.username), UUID(x.profile.uuid)), users))
+            xml = USERS(*map(lambda x: A(href=reverse('api_users_detail',args=[x.email]), rel=x.email), users))
             url_response = prepxml(etree.tostring(xml), status)
             cache.set(users_list_cache_key, url_response, settings.DEFAULT_CACHE_TIMEOUT)
 

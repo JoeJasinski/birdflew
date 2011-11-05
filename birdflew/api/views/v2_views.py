@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.sites.models import Site
 from django.conf import settings
+from django.contrib.sites.models import Site
 from django.core.cache import cache
 from django.db.models import signals
 from django.dispatch import receiver
@@ -38,7 +39,8 @@ class users_list(BlankView):
             UUID = E.uuid
             status=200
             
-            xml = USERS(*map(lambda x: A(href=reverse('api_users_detail',args=[x.email]), rel=x.email), users))
+            xml = USERS(*map(lambda x: USER(x.email), users))
+            #xml = USERS(*map(lambda x: A(href=reverse('api_users_detail',args=[x.email]), rel=x.email), users))
             url_response = prepxml(etree.tostring(xml), status)
             cache.set(users_list_cache_key, url_response, settings.DEFAULT_CACHE_TIMEOUT)
 
@@ -61,10 +63,12 @@ class users_detail(BlankView):
              xml = messagexml('Object does not exist')
              status=404
         else:
+            site = Site.objects.get_current()
             E = ElementMaker()
             USER = E.user
-            USERNAME = E.username
-            xml = USER(USERNAME(user.username))
+            EMAIL = E.email
+            URL = E.url
+            xml = USER(EMAIL(user.email), URL("http://%s" % site.domain))
             status=201
             
         return prepxml(etree.tostring(xml), status)

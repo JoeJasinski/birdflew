@@ -149,8 +149,8 @@ class categories(BlankView):
             status = 200
             
             categories = Category.objects.all()
-            xml = E.div(*map(lambda x: E.a(x.category, CLASS('category'), href="http://%s%s" % (
-                    site.domain, reverse('api_category', args=[x.category,]))), categories))
+            xml = E.body(*map(lambda x: E.div(E.a(x.category, CLASS('category'), href="http://%s%s" % (
+                    site.domain, reverse('api_category', args=[x.category,])))), categories))
         except exceptions.ObjectDoesNotExist, e:
             xml = messagexml('Category does not exist')
             status=404

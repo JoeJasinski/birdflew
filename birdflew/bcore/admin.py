@@ -4,7 +4,7 @@ from mptt.admin import MPTTModelAdmin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 
-from .models import UrlModel, UserInfo, Comment, Category
+from .models import UrlModel, Bookmark, UserInfo, Comment, Category
 
 class CommentInline(admin.StackedInline):
     model = Comment
@@ -15,11 +15,18 @@ class CategoryInline(admin.StackedInline):
     extra = 0
 
 class UrlModelAdmin(MPTTModelAdmin):
+    list_display = ['url','parent','created','modified']
+    readonly_fields = ['uuid',]
+
+admin.site.register(UrlModel, UrlModelAdmin)
+
+
+class BookmarkAdmin(MPTTModelAdmin):
     list_display = ['url','user','parent','created','modified']
     inlines = [CommentInline, CategoryInline]
     readonly_fields = ['uuid',]
 
-admin.site.register(UrlModel, UrlModelAdmin)
+admin.site.register(Bookmark, BookmarkAdmin)
 
 
 class UserInfoInline(admin.StackedInline):

@@ -85,7 +85,7 @@ class users_urls(BlankView):
             xml = messagexml('Object does not exist')
             status=404
         else:
-            url_list = user.user_urls.all()
+            url_list = user.user_bookmarks.all()
             E = ElementMaker()
             URLS = E.urls
             URL = E.url
@@ -109,7 +109,7 @@ class users_url(BlankView):
             status=404
         else:
             try:
-                url = user.user_urls.get(uuid=url_id)
+                bookmark = user.user_bookmarks.get(uuid=url_id)
                 E = ElementMaker()
                 URL = E.url
                 URI = E.uri
@@ -124,9 +124,15 @@ class users_url(BlankView):
                      return {"class":' '.join(args)}
                 
                 xml = E.div(CLASS('url'), 
-                        ABBR(CLASS("date-added"), title="%s" % url.created.strftime('%Y-%m-%dT%H:%M:%S')), 
-                        A(url.url, rel="source", href=url.url), 
-                        UL(LI(*map(lambda x: A(x.category, href=x.category, rel="category"), url.category_set.all()))))
+                        ABBR(CLASS("date-added"), title="%s" % bookmark.created.strftime('%Y-%m-%dT%H:%M:%S')), 
+                        A(bookmark.url, rel="source", href=bookmark.url), 
+                        UL(
+                           LI(*map(lambda x: A(x.category, href=x.category, rel="category"), bookmark.category_set.all()))
+                           ),
+                        UL(
+                           LI(*map(lambda x: A(x.comment, href=x.comment, rel="comments"), bookmark.comment_set.all()))
+                           )
+                        )
             except exceptions.ObjectDoesNotExist, e:
                 xml = messagexml('Url does not exist')
                 status=404
@@ -134,7 +140,36 @@ class users_url(BlankView):
         return prepxml(etree.tostring(xml), status)
 
 
+    @method_decorator(csrf_exempt)
+    @method_decorator(validators.RateLimitDecorator)
+    def post(self, request, user, url_id, *args, **kwargs):
+        try:
+            user = User.objects.get(email=user)
+        except exceptions.ObjectDoesNotExist, e:
+            xml = messagexml('User does not exist')
+            status=404
+            return prepxml(etree.tostring(xml), status)
+
+        form = RawBookmarkForm(data=request.raw_post_data)
+        if form.is_valid():
+            uri = form.cleaned_data.get('uri')
+            categories = form.cleaned_data.get('categories')
+            comments = form.cleaned_data.get('comments')
+            for u in url_list:
+                bookmark_model, created = Bookmark.objects.get_or_create(url=u,)
+                
+            num_added = len(url_list)
+            xml = messagexml("Added %s Records" % (num_added))
+        else:
+            xml = messagexml('Error with form validation: %s' % form.errors)
+            print form.errors
+
+        return prepxml(etree.tostring(xml), status)
+
+
+
 class categories(BlankView):
+
 
     @method_decorator(validators.RateLimitDecorator)
     def get(self, request, *args, **kwargs):

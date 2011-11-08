@@ -5,7 +5,7 @@ from django.core.cache import cache
 from django.http import HttpResponseRedirect, HttpResponse
 from django.conf import settings
 
-input_message_spec = """<element name="urls" xmlns="http://relaxng.org/ns/structure/1.0">
+input_url_message_spec = """<element name="urls" xmlns="http://relaxng.org/ns/structure/1.0">
   <oneOrMore>
     <element name="url">
       <text/>
@@ -23,8 +23,8 @@ class BaseURL(object):
      
 
 
-def input_message_spec_relaxing():
-    xml = etree.fromstring(input_message_spec)
+def input_message_spec_relaxing(spec):
+    xml = etree.fromstring(spec)
     return etree.RelaxNG(xml)
 
 

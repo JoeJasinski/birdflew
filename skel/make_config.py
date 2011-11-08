@@ -1,25 +1,31 @@
-#import sys, json, os
-#from django.template import Template, Context
-#
-#
-#config = {
-#  'HOST':'birdflew.com',
-#  'PORT':'80',
-#  'VENV_ROOT':'/sites/p2p/',
-#}
-#
-## import json
-## print json.dumps(config, sort_keys=True, indent=4)
-#
-#
-#finput = open(sys.argv[1], 'r')
-#t = Template(finput.read())
-#finput.close()
-#
-#
-#config_path = os.path.join(os.path.abspath(__file__),'config.json')
-#c = Context(json.load(open(config_path)))
-#fout = open(sys.argv[2], 'w')
-#config_text = t.render(c).encode('utf-8')
-#fout.write(config_text)
-#fout.close()
+import os
+from jinja2 import Environment, PackageLoader, FileSystemLoader
+VIRTUAL_ENV =  os.environ.get('VIRTUAL_ENV')
+if not VIRTUAL_ENV:
+    raise EnvironmentError('Virtualenv must be active.')
+env = Environment(loader=FileSystemLoader(os.path.join(VIRTUAL_ENV, 'proj', 'skel')))
+
+SHARED = {'ENVIRONMENT_DIR':VIRTUAL_ENV, 'APP_NAME':'birdflew', 'APP_USER':'p2p', 'WEB_USER':'www-data', 'GROUP':'worker'}
+
+mapping = [ 
+('nginx/nginx.conf', os.path.join(VIRTUAL_ENV, 'etc', 'nginx', 'nginx.conf'), dict({}, **SHARED)),
+('nginx/server.conf', os.path.join(VIRTUAL_ENV, 'etc', 'nginx', 'server.conf'), dict({}, **SHARED)),
+('nginx/locations.conf', os.path.join(VIRTUAL_ENV, 'etc', 'nginx', 'locations.conf'), dict({}, **SHARED)),
+('nginx/django.conf', os.path.join(VIRTUAL_ENV, 'etc', 'nginx', 'django.conf'), dict({}, **SHARED)),
+('nginx/conf/fastcgi.conf', os.path.join(VIRTUAL_ENV, 'etc', 'nginx', 'conf','fastcgi.conf'), dict({}, **SHARED)),
+('nginx/conf/mime.types', os.path.join(VIRTUAL_ENV, 'etc', 'nginx', 'conf','mime.types'), dict({}, **SHARED)),
+('nginx/conf/proxy.conf', os.path.join(VIRTUAL_ENV, 'etc', 'nginx', 'conf','proxy.conf'), dict({}, **SHARED)),
+('redis/redis.conf', os.path.join(VIRTUAL_ENV, 'etc', 'redis', 'redis.conf'), dict({}, **SHARED)),
+('bin/start_fastcgi.sh', os.path.join(VIRTUAL_ENV, 'bin', 'start_fastcgi.sh'), dict({}, **SHARED)),
+('bin/start_nginx.sh', os.path.join(VIRTUAL_ENV, 'bin', 'start_nginx.sh'), dict({}, **SHARED)),
+('bin/start_twisted.sh', os.path.join(VIRTUAL_ENV, 'bin', 'start_twisted.sh'), dict({}, **SHARED)),
+]
+
+for source, dest, context in mapping:
+    if os.path.isfile(dest):
+        print "EXISTS"
+    template = env.get_template(source)
+    print "======================================================="
+    print "== %s" % dest
+    print "========================================================"
+    print template.render(**context)

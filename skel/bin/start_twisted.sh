@@ -1,4 +1,4 @@
-. /sites/p2p/bin/activate
+. {{ ENVIRONMENT_DIR }}/bin/activate
 
 ENV_NAME="p2p"
 MAIN_MODULE="birdflew"

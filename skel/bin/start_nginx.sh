@@ -7,7 +7,7 @@ then
   exit 1
 fi
 
-VIRTUAL_ENV="/sites/p2p"
+VIRTUAL_ENV="{{ ENVIRONMENT_DIR }}"
 
 if [ -f "${VIRTUAL_ENV}/run/nginx.pid" ]
 then

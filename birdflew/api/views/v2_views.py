@@ -35,11 +35,13 @@ class users_list(BlankView):
             E = ElementMaker()
             USERS = E.users
             USER = E.user
+            NAME = E.name
+            LINK = E.link
             A = E.a
             UUID = E.uuid
             status=200
             
-            xml = USERS(*map(lambda x: USER(x.email), users))
+            xml = USERS(*map(lambda x: USER(NAME(x.email), LINK(reverse('api_users_detail', args=[x.email]))), users))
             #xml = USERS(*map(lambda x: A(href=reverse('api_users_detail',args=[x.email]), rel=x.email), users))
             url_response = prepxml(etree.tostring(xml), status)
             cache.set(users_list_cache_key, url_response, settings.DEFAULT_CACHE_TIMEOUT)

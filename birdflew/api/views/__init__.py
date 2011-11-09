@@ -33,6 +33,14 @@ def messagexml(message, type="error"):
     return xml   
 
 
+def xml_to_xslt(xml, template, context={} ):
+    t = loader.get_template(template)
+    c = Context(context)
+    rendered = t.render(c)
+    xslt = etree.XSLT(etree.fromstring(rendered))
+    return xslt(xml)
+
+
 class BlankView(View):
     
     def _xml_error(self, message):

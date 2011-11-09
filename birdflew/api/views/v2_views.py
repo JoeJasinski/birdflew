@@ -16,7 +16,7 @@ from django.contrib.auth.models import User
 
 from bcore.models import UrlModel, Category
 from api import validators 
-from api.views import BlankView, prepxml, messagexml
+from api.views import BlankView, prepxml, messagexml, xml_to_xslt
 
 from lxml import etree
 from lxml.builder import ElementMaker 
@@ -42,8 +42,11 @@ class users_list(BlankView):
             status=200
             
             xml = USERS(*map(lambda x: USER(NAME(x.email), LINK(reverse('api_users_detail', args=[x.email]))), users))
-            #xml = USERS(*map(lambda x: A(href=reverse('api_users_detail',args=[x.email]), rel=x.email), users))
+            
+            xml = xml_to_xslt(xml=xml, template="api/v2_users_list.xslt", 
+                              context={'title':'Users List','heading':'Users List'})    
             url_response = prepxml(etree.tostring(xml), status)
+                    
             cache.set(users_list_cache_key, url_response, settings.DEFAULT_CACHE_TIMEOUT)
 
         return url_response
@@ -69,9 +72,16 @@ class users_detail(BlankView):
             E = ElementMaker()
             USER = E.user
             EMAIL = E.email
-            URL = E.url
-            xml = USER(EMAIL(user.email), URL("http://%s" % site.domain))
+            NODE = E.node
+            URLS = E.urls
+            xml = USER(EMAIL(user.email), 
+                       NODE("http://%s" % site.domain),
+                       URLS(reverse('api_users_urls', args=[user.email,])),
+                       )
             status=201
+        
+        xml = xml_to_xslt(xml=xml, template="api/v2_users_detail.xslt", 
+                              context={'title':'Users Detail','heading':'Users Detail'}) 
             
         return prepxml(etree.tostring(xml), status)
 
@@ -114,17 +124,19 @@ class users_url(BlankView):
                 bookmark = user.user_bookmarks.get(uuid=url_id)
                 E = ElementMaker()
                 URL = E.url
-                URI = E.uri
-                ID = E.id
-                ABBR = E.abbr
-                A = E.a
-                UL = E.ul
-                LI = E.li
+                DATE_ADDED = E.date_added
+                SOURCE = E.source
+                CATEGORIES = E.categories
+                CAGEGORY = E.category
+                COMMENTS = E.comments
+                COMMENT = E.comment
+
                 status=200
                 
                 def CLASS(*args): # class is a reserved word in Python
                      return {"class":' '.join(args)}
                 
+                """
                 xml = E.div(CLASS('url'), 
                         ABBR(CLASS("date-added"), title="%s" % bookmark.created.strftime('%Y-%m-%dT%H:%M:%S')), 
                         A(bookmark.url, rel="source", href=bookmark.url), 
@@ -135,6 +147,14 @@ class users_url(BlankView):
                            LI(*map(lambda x: A(x.comment, href=x.comment, rel="comments"), bookmark.comment_set.all()))
                            )
                         )
+                """
+                xml = URL(DATE_ADDED(bookmark.created.strftime('%Y-%m-%dT%H:%M:%S')),
+                          SOURCE(bookmark.url),
+                          CATEGORIES(*map(lambda x: CAGEGORY(x.category), bookmark.category_set.all())),
+                          COMMENTS(*map(lambda x: COMMENT(x.comment), bookmark.comment_set.all())),
+                          )
+                #xml = xml_to_xslt(xml=xml, template="api/v2_users_url.xslt", 
+                #              context={'title':'URL Detail','heading':'URL Detail'})    
             except exceptions.ObjectDoesNotExist, e:
                 xml = messagexml('Url does not exist')
                 status=404

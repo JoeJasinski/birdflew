@@ -13,12 +13,38 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.views.generic.base import View
 
+
 def prepxml(xml, status):
     
     decl = """<?xml version="1.0" encoding="utf-8"?>"""
     response = HttpResponse("%s%s" % (decl, xml), status=status, content_type="application/xml")
-    response['Content-Disposition'] = 'inline; filename=test.xml'
+    response['Content-Disposition'] = 'inline; filename=output.xml'
     return response
+
+def prepxhtml(xml, status):
+    
+    decl = """<?xml version="1.0" encoding="utf-8"?>"""
+    response = HttpResponse("%s%s" % (decl, xml), status=status, content_type="application/xhtml+xml")
+    response['Content-Disposition'] = 'inline; filename=output.xhtml'
+    return response
+
+
+class Emitter(object):
+    pass
+
+class XMLEmitter(Emitter):
+    type = 'xml'
+    
+    def run(self, xml, status):
+        return prepxml(xml, status)
+        
+class XHTMLEmitter(Emitter):
+    type = 'xhtml'
+    
+    def run(self, xml, status):
+        return prepxhtml(xml, status)
+
+
 
 def messagexml(message, type="error"):
 

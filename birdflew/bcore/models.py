@@ -23,6 +23,9 @@ class Category(TrackingMixin):
     url = models.ForeignKey('bcore.Bookmark')
     category = models.CharField(max_length=20) 
    
+    class Meta:
+        verbose_name = 'Category'
+        verbose_name_plural = "Categories"
 
 class UrlModel(MPTTModel, TrackingMixin):
     

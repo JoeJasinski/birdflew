@@ -1,8 +1,8 @@
-. /sites/p2p/bin/activate
+. {{ ENVIRONMENT_DIR }}/bin/activate
 
 ENV_NAME="p2p"
-MAIN_MODULE="birdflew"
-ENV_SETTINGS="birdflew.settings"
+MAIN_MODULE="{{ APP_NAME }}"
+ENV_SETTINGS="{{ APP_NAME }}.settings"
 PID_FILE="${VIRTUAL_ENV}/run/fcgi.pid"
 OUTLOG_FILE="${VIRTUAL_ENV}/log/fcgi_out.log"
 ERRLOG_FILE="${VIRTUAL_ENV}/log/fcgi_err.log"

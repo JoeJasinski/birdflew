@@ -31,13 +31,13 @@ version_two_url = patterns('',
         {}, 
         name='api_users_detail'),
 
-    url(r'^users/(?P<user>[-_\w.@]{1,30})/urls$', csrf_exempt(v2_views.users_urls.as_view()), 
+    url(r'^users/(?P<user>[-_\w.@]{1,30})/urls$', csrf_exempt(v2_views.users_bookmarks.as_view()), 
         {}, 
-        name='api_users_urls'),
+        name='api_users_bookmarks'),
 
-    url(r'^users/(?P<user>[-_\w.@]{1,30})/urls/(?P<url_id>[-_\w.@%]{1,100})$', csrf_exempt(v2_views.users_url.as_view()), 
+    url(r'^users/(?P<user>[-_\w.@]{1,30})/urls/(?P<url_id>[-_\w.@%]{1,100})$', csrf_exempt(v2_views.users_bookmark.as_view()), 
         {}, 
-        name='api_users_url'),
+        name='api_users_bookmark'),
 
     url(r'^categories/$', csrf_exempt(v2_views.categories.as_view()), 
         {}, 

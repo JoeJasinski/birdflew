@@ -32,7 +32,8 @@ class users_list(BlankView):
     
     @method_decorator(validators.RateLimitDecorator)
     def get(self, request, *args, **kwargs):
-        
+
+        site = Site.objects.get_current()
         url_response = None #cache.get(users_list_cache_key)
         if not url_response:
             users = User.objects.all()
@@ -45,7 +46,11 @@ class users_list(BlankView):
             UUID = E.uuid
             status=200
             
-            xml = USERS(*map(lambda x: USER(NAME(x.email), LINK(reverse('api_users_detail', args=[x.email]))), users))
+            xml = USERS(*map(lambda x: USER(
+                                        NAME(x.email), 
+                                        LINK("http://%s%s" % (site.domain, reverse('api_users_detail', args=[x.email]),) )
+                                        )
+                             , users))
             
             emitter = get_emitter(request)
             if emitter.type == 'xhtml':
@@ -84,7 +89,7 @@ class users_detail(BlankView):
             URLS = E.urls
             xml = USER(EMAIL(user.email), 
                        NODE("http://%s" % site.domain),
-                       URLS(reverse('api_users_urls', args=[user.email,])),
+                       URLS("http://%s%s" % (site.domain, reverse('api_users_bookmarks', args=[user.email,]))),
                        )
             status=201
 
@@ -95,13 +100,14 @@ class users_detail(BlankView):
         return emitter.run(etree.tostring(xml), status)
 
 
-class users_urls(BlankView):
+class users_bookmarks(BlankView):
 
     @method_decorator(validators.RateLimitDecorator)
     def get(self, request, user, *args, **kwargs):
         
         emitter = get_emitter(request) 
-   
+        site = Site.objects.get_current()
+        
         try:
             user = User.objects.get(email=user)
         except exceptions.ObjectDoesNotExist, e:
@@ -116,16 +122,18 @@ class users_urls(BlankView):
             BOOKMARK = E.bookmark
             ID = E.id
             status=200
-            xml = URLS(*map(lambda x: URL(URI(reverse('api_users_url', args=[user.email, x.uuid,])), BOOKMARK(x.url)), url_list))
+            xml = URLS(*map(lambda x: URL(
+                                          URI("http://%s%s" % (site.domain, reverse('api_users_bookmark', args=[user.email, x.uuid,]))), 
+                                          BOOKMARK(x.url)), url_list))
 
             if emitter.type == 'xhtml': 
-                xml = xml_to_xslt(xml=xml, template="api/v2_users_urls.xslt", 
+                xml = xml_to_xslt(xml=xml, template="api/v2_users_bookmarks.xslt", 
                           context={'title':'User URL List','heading':'User URL List'})
             
         return emitter.run(etree.tostring(xml), status)
 
 
-class users_url(BlankView):
+class users_bookmark(BlankView):
 
     @method_decorator(validators.RateLimitDecorator)
     def get(self, request, user, url_id, *args, **kwargs):
@@ -175,7 +183,7 @@ class users_url(BlankView):
                           )
 
                 if emitter.type == 'xhtml': 
-                    xml = xml_to_xslt(xml=xml, template="api/v2_users_url.xslt", 
+                    xml = xml_to_xslt(xml=xml, template="api/v2_users_bookmark.xslt", 
                               context={'title':'URL Detail','heading':'URL Detail'})    
             except exceptions.ObjectDoesNotExist, e:
                 xml = messagexml('Url does not exist')
@@ -274,7 +282,7 @@ class category(BlankView):
             LINK = E.link
 
             xml = URLS(*map(lambda b: URL(  URI(
-            "http://%s%s" % ( site.domain, reverse('api_users_url', args=[b.user.email, b.uuid]))
+            "http://%s%s" % ( site.domain, reverse('api_users_bookmark', args=[b.user.email, b.uuid]))
                                     ), LINK(b.url)
                                 ), bookmarks))
                           

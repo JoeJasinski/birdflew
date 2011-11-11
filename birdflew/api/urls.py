@@ -23,7 +23,7 @@ version_one_url = patterns('',
 
 version_two_url = patterns('',
 
-    url(r'^users/$', csrf_exempt(v2_views.users_list.as_view()), 
+    url(r'^users(?:\.(?P<format>[a-zA-Z]+))?$', csrf_exempt(v2_views.users_list.as_view()), 
         {}, 
         name='api_users_list'),
 
@@ -31,7 +31,7 @@ version_two_url = patterns('',
         {}, 
         name='api_users_detail'),
 
-    url(r'^users/(?P<user>[-_\w.@]{1,30})/urls$', csrf_exempt(v2_views.users_bookmarks.as_view()), 
+    url(r'^users/(?P<user>[-_\w.@]{1,30})/urls(?:\.(?P<format>[a-zA-Z]+))?$', csrf_exempt(v2_views.users_bookmarks.as_view()), 
         {}, 
         name='api_users_bookmarks'),
 
@@ -39,11 +39,11 @@ version_two_url = patterns('',
         {}, 
         name='api_users_bookmark'),
 
-    url(r'^categories/$', csrf_exempt(v2_views.categories.as_view()), 
+    url(r'^categories(?:\.(?P<format>[a-zA-Z]+))?$', csrf_exempt(v2_views.categories.as_view()), 
         {}, 
         name='api_categories'),
 
-    url(r'^categories/(?P<category>[-_\w]{1,30})$', csrf_exempt(v2_views.category.as_view()), 
+    url(r'^categories/(?P<category>[-_\w]{1,30})(?:\.(?P<format>[a-zA-Z]+))?$', csrf_exempt(v2_views.category.as_view()), 
         {}, 
         name='api_category'),
 

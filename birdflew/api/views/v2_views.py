@@ -25,14 +25,18 @@ from lxml.builder import ElementMaker
 
 users_list_cache_key = 'api_users_list'
 
-def get_emitter(request):
-    return XHTMLEmitter()
+def get_emitter(request, format=None):
+    if format == 'xml':
+        return XMLEmitter()
+    else:
+        return XHTMLEmitter()
 
 class users_list(BlankView):
     
     @method_decorator(validators.RateLimitDecorator)
     def get(self, request, *args, **kwargs):
-
+        format = kwargs.get('format','')
+        emitter = get_emitter(request, format)
         site = Site.objects.get_current()
         url_response = None #cache.get(users_list_cache_key)
         if not url_response:
@@ -52,7 +56,7 @@ class users_list(BlankView):
                                         )
                              , users))
             
-            emitter = get_emitter(request)
+            
             if emitter.type == 'xhtml':
                 xml = xml_to_xslt(xml=xml, template="api/v2_users_list.xslt", 
                                   context={'title':'Users List','heading':'Users List'})
@@ -73,8 +77,8 @@ class users_detail(BlankView):
 
     @method_decorator(validators.RateLimitDecorator)
     def get(self, request, user, *args, **kwargs):
-
-        emitter = get_emitter(request)    
+        format = kwargs.get('format','')
+        emitter = get_emitter(request, format)    
         try:
             user = User.objects.get(email=user)
         except exceptions.ObjectDoesNotExist, e:
@@ -104,8 +108,8 @@ class users_bookmarks(BlankView):
 
     @method_decorator(validators.RateLimitDecorator)
     def get(self, request, user, *args, **kwargs):
-        
-        emitter = get_emitter(request) 
+        format = kwargs.get('format','')
+        emitter = get_emitter(request, format) 
         site = Site.objects.get_current()
         
         try:
@@ -137,8 +141,8 @@ class users_bookmark(BlankView):
 
     @method_decorator(validators.RateLimitDecorator)
     def get(self, request, user, url_id, *args, **kwargs):
-
-        emitter = get_emitter(request)  
+        format = kwargs.get('format','')
+        emitter = get_emitter(request, format)  
           
         try:
             user = User.objects.get(email=user)
@@ -195,8 +199,8 @@ class users_bookmark(BlankView):
     @method_decorator(csrf_exempt)
     @method_decorator(validators.RateLimitDecorator)
     def post(self, request, user, url_id, *args, **kwargs):
-        
-        emitter = get_emitter(request)  
+        format = kwargs.get('format','')
+        emitter = get_emitter(request, format)  
         
         try:
             user = User.objects.get(email=user)
@@ -230,7 +234,8 @@ class categories(BlankView):
 
     @method_decorator(validators.RateLimitDecorator)
     def get(self, request, *args, **kwargs):
-        emitter = get_emitter(request) 
+        format = kwargs.get('format','')
+        emitter = get_emitter(request, format) 
         try:
             status = 200
 
@@ -262,7 +267,8 @@ class category(BlankView):
 
     @method_decorator(validators.RateLimitDecorator)
     def get(self, request, category, *args, **kwargs):
-        emitter = get_emitter(request)
+        format = kwargs.get('format','')
+        emitter = get_emitter(request, format)
         try:
             status = 200
 

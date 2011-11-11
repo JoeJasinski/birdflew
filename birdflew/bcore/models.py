@@ -15,17 +15,20 @@ class TrackingMixin(models.Model):
 
 
 class Comment(TrackingMixin):
-    url = models.ForeignKey('bcore.Bookmark')
+    bookmark = models.ForeignKey('bcore.Bookmark')
     comment = models.TextField()
  
  
 class Category(TrackingMixin):
-    url = models.ForeignKey('bcore.Bookmark')
+
     category = models.CharField(max_length=20) 
    
     class Meta:
         verbose_name = 'Category'
         verbose_name_plural = "Categories"
+
+    def __unicode__(self):
+        return self.category
 
 class UrlModel(MPTTModel, TrackingMixin):
     
@@ -59,6 +62,7 @@ class Bookmark(MPTTModel, TrackingMixin):
     parent = models.ForeignKey('self', blank=True, null=True, related_name='children')
     url = models.CharField(max_length=255,)
     uuid = UUIDField(version=1)
+    categories = models.ManyToManyField('bcore.Category', related_name='category_bookmarks', blank=True, null=True)
     
     def __unicode__(self):
         return self.url

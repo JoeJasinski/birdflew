@@ -39,7 +39,7 @@
     <li class="category">
      <a>
       <xsl:attribute name="href"><xsl:value-of select="source" /></xsl:attribute>
-      <xsl:attribute name="rel">category</xsl:attribute><xsl:value-of select="name"/>
+      <xsl:attribute name="rel">category</xsl:attribute><xsl:value-of select="category"/>
      </a>
     </li>
   </xsl:template>

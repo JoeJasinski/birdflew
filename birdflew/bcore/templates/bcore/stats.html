@@ -36,6 +36,26 @@
     <td class="api_method">GET</td>
   </tr>
 
+  <tr class="body-list {% cycle "rowa" "rowb" %}">
+    <td class="api_url"><a href="">/v2/users/{username}/urls</a></td>
+    <td class="api_method">GET</td>
+  </tr>
+
+  <tr class="body-list {% cycle "rowa" "rowb" %}">
+    <td class="api_url"><a href="">/v2/users/{username}/urls/{url_id}</a></td>
+    <td class="api_method">GET</td>
+  </tr>
+
+  <tr class="body-list {% cycle "rowa" "rowb" %}">
+    <td class="api_url"><a href="{% url api_categories %}">/v2/categories</a></td>
+    <td class="api_method">GET</td>
+  </tr>
+
+  <tr class="body-list {% cycle "rowa" "rowb" %}">
+    <td class="api_url"><a href="">/v2/categories/{category}</a></td>
+    <td class="api_method">GET</td>
+  </tr>
+
 
 </tbody></table>
 

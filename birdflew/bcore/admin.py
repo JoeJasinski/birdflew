@@ -10,20 +10,20 @@ class CommentInline(admin.StackedInline):
     model = Comment
     extra = 0
 
-class CategoryInline(admin.StackedInline):
-    model = Category
-    extra = 0
-
 class UrlModelAdmin(MPTTModelAdmin):
     list_display = ['url','parent','created','modified']
     readonly_fields = ['uuid',]
 
 admin.site.register(UrlModel, UrlModelAdmin)
 
+class CategoryAdmin(admin.ModelAdmin):
+    pass
+
+admin.site.register(Category, CategoryAdmin)
 
 class BookmarkAdmin(MPTTModelAdmin):
     list_display = ['url','user','parent','created','modified']
-    inlines = [CommentInline, CategoryInline]
+    inlines = [CommentInline, ]
     readonly_fields = ['uuid',]
 
 admin.site.register(Bookmark, BookmarkAdmin)

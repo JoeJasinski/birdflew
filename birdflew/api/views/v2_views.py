@@ -170,7 +170,7 @@ class users_url(BlankView):
 
                 xml = URL(DATE_ADDED(bookmark.created.strftime('%Y-%m-%dT%H:%M:%S')),
                           SOURCE(bookmark.url),
-                          CATEGORIES(*map(lambda x: CAGEGORY(x.category), bookmark.category_set.all())),
+                          CATEGORIES(*map(lambda x: CAGEGORY(x.category), bookmark.categories.all())),
                           COMMENTS(*map(lambda x: COMMENT(x.comment), bookmark.comment_set.all())),
                           )
 
@@ -260,24 +260,29 @@ class category(BlankView):
 
             site = Site.objects.get_current()
             category = Category.objects.get(category=category)
-            
-            E = ElementMaker()
-            CATEGORY = E.category
-            URI = E.uri
-            NAME = E.name
-
-            xml = CATEGORY(URI(
-            "http://%s%s" % ( site.domain, reverse('api_category', args=[category.category,]))
-                                    ), NAME(category.category)
-                                )
-                          
-            if emitter.type == 'xhtml': 
-                xml = xml_to_xslt(xml=xml, template="api/v2_category.xslt", 
-                              context={'title':'Category','heading':'Category'})                    
+            bookmarks = category.category_bookmarks.all()
 
         except exceptions.ObjectDoesNotExist, e:
             xml = messagexml('Category does not exist')
             status=404
+        else:
+            E = ElementMaker()
+            URLS = E.urls
+            URL = E.url
+            URI = E.uri
+            NAME = E.name
+            LINK = E.link
+
+            xml = URLS(*map(lambda b: URL(  URI(
+            "http://%s%s" % ( site.domain, reverse('api_users_url', args=[b.user.email, b.uuid]))
+                                    ), LINK(b.url)
+                                ), bookmarks))
+                          
+            if emitter.type == 'xhtml': 
+                xml = xml_to_xslt(xml=xml, template="api/v2_category.xslt", 
+                              context={'title':'Category Bookmarks','heading':'Category Bookmarks'})                    
+
+
         
         return emitter.run(etree.tostring(xml), status)
 

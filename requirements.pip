@@ -1,6 +1,8 @@
 Django==1.3.1
+Fabric==1.3.2
 Jinja2==2.6
 Twisted==11.0.0
+chardet==1.0.1
 django-extensions==0.7.1
 django-mptt==0.4.2
 -e git+https://github.com/pbs-education/django-piston.git@40fc746e1593a5ba36010edcf6dabd99435d719b#egg=django_piston-0.2.3rc1-py2.6-dev
@@ -9,6 +11,8 @@ hiredis==0.1.0
 include-server==3.1-toolwhip.1
 lxml==2.3.1
 psycopg2==2.4.2
+pycrypto==2.4.1
 redis==2.4.9
+ssh==1.7.9
 wsgiref==0.1.2
 zope.interface==3.8.0

@@ -1,6 +1,7 @@
 import re
 from lxml import etree
 from django import forms 
+from django.contrib.auth.models import User
 from . import validators
 
 class RawUrlForm(object):
@@ -69,7 +70,49 @@ class RawUrlForm(object):
         
         return (not bool(self.errors))
     
+
+class RawUserForm(object):
+
+    def __init__(self, data=""):
+        self.raw_data = data
+        self.errors = []
+        
+
+    def is_valid(self):
+        self.errors = []
+        cleaned_username = ''
+        
+        try:
+            radx = etree.fromstring(self.raw_data)
+        except Exception, e:
+            self.errors.append(e.message)
     
+        if not self.errors:
+            relax =  validators.input_message_spec_relaxing(validators.input_user_message_spec)
+            result = relax.validate(radx)
+            if not result:
+                self.errors.append(relax.error_log)
+
+        if not self.errors:
+            try:
+                username = map(lambda x: x.text, radx.xpath('/user/email'))[0]
+            except Exception, e:
+                self.errors.append(e.message)
+        
+        if not self.errors:
+            cleaned_username, messages = validators.validate_email(username)
+            self.errors += messages 
+            
+        if not self.errors:
+            if len(User.objects.filter(email=cleaned_username)):
+                self.errors.append('Username already exists.')
+        
+        if not self.errors:
+            self.cleaned_data = {}
+            self.cleaned_data['username'] = cleaned_username 
+        
+        return (not bool(self.errors))
+           
 
 class RawBookmarkForm(object):
         

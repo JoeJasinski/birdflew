@@ -44,6 +44,22 @@ input_bookmark_message_spec = """<?xml version="1.0" encoding="UTF-8"?>
 </grammar>
 """
 
+input_user_message_spec = """<?xml version="1.0" encoding="UTF-8"?>
+<grammar ns="" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+  <start>
+    <element name="user">
+      <element name="email">
+        <text/>
+      </element>
+      <element name="node">
+        <data type="anyURI"/>
+      </element>
+    </element>
+  </start>
+</grammar>
+
+"""
+
 
 class BaseURL(object): 
     
@@ -72,6 +88,15 @@ def validate_url_chars(url):
 
     return (not bool(messages), messages)
 
+
+def validate_email(email):
+    messages = []
+    # pattern used from http://code.activestate.com/recipes/66439-stringvalidator/
+    email_pattern = re.compile("^.+@.+\..{2,3}$")
+    if not email_pattern.match(email):
+        messages.append("invalid email address.")
+    return (email, messages)
+    
 
 def validate_url_format(url):
 

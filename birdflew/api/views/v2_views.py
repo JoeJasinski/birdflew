@@ -1,10 +1,10 @@
+import uuid
 from django.core.urlresolvers import reverse
 from django.core import exceptions
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.sites.models import Site
 from django.conf import settings
-from django.contrib.sites.models import Site
 from django.core.cache import cache
 from django.db.models import signals
 from django.dispatch import receiver
@@ -68,6 +68,27 @@ class users_list(BlankView):
 
         return url_response
 
+
+    @method_decorator(validators.RateLimitDecorator)
+    def post(self, request, *args, **kwargs):
+        headers = {}
+        emitter = get_emitter(request, 'xml')  
+        form = forms.RawUserForm(data=request.raw_post_data)
+        if form.is_valid():
+            password = uuid.uuid4().hex
+            username = form.cleaned_data.get('username')
+            new_user = User.objects.create(username=username, 
+                                           email=username,
+                                           password=password)
+            status = 201
+            xml = messagexml("User Added", type="success")
+        else:
+            xml = messagexml('Error with form validation: %s' % form.errors)
+            status = 500
+            print form.errors
+
+        return emitter.run(etree.tostring(xml), status, headers)
+    
 
 @receiver(signals.post_save, sender=User)
 def del_api_lookupuurlsView(sender, instance, **kwargs):

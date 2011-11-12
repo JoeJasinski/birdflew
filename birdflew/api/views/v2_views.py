@@ -14,10 +14,11 @@ from django.utils.decorators import method_decorator
 
 from django.contrib.auth.models import User
 
-from bcore.models import UrlModel, Category
-from api import validators 
+from bcore.models import UrlModel, Category, Bookmark
+from api import validators, forms
 from api.views import (BlankView, prepxml, prepxhtml, messagexml, xml_to_xslt,
                        XMLEmitter, XHTMLEmitter)
+
 
 from lxml import etree
 from lxml.builder import ElementMaker 
@@ -136,6 +137,51 @@ class users_bookmarks(BlankView):
             
         return emitter.run(etree.tostring(xml), status)
 
+    @method_decorator(csrf_exempt)
+    @method_decorator(validators.RateLimitDecorator)
+    def post(self, request, user, *args, **kwargs):
+        headers = {}
+        emitter = get_emitter(request, 'xml')  
+        
+        try:
+            user = User.objects.get(email=user)
+        except exceptions.ObjectDoesNotExist, e:
+            xml = messagexml('User does not exist')
+            status=404
+            return prepxml(etree.tostring(xml), status)
+
+        form = forms.RawBookmarkForm(data=request.raw_post_data)
+        if form.is_valid():
+            uri = form.cleaned_data.get('uri')
+            new_categories = form.cleaned_data.get('categories')
+            new_comments = form.cleaned_data.get('comments')
+            
+            bookmark_model, created = user.user_bookmarks.get_or_create(url=uri.url_socket, user=user)
+            existing_categories = [c.category for c in bookmark_model.categories.all()]
+            
+            for new_category in new_categories:
+        
+                if new_category not in existing_categories:
+                    category_obj, created = Category.objects.get_or_create(category__iexact=new_category,
+                                            defaults={'category':new_category})
+                    bookmark_model.categories.add(category_obj)
+            #    bookmark_model, created = Bookmark.objects.get_or_create(url=u,)
+            if new_comments:
+                bookmark_model.bookmark_comments.all().delete()
+                for new_comment in new_comments:
+                    bookmark_model.bookmark_comments.create(comment=new_comment) 
+            
+            status = 201
+            xml = messagexml("Bookmark Added", type="success")
+            headers.update({'Location': bookmark_model.get_absolute_url() })
+        else:
+            xml = messagexml('Error with form validation: %s' % form.errors)
+            status = 500
+            print form.errors
+
+        return emitter.run(etree.tostring(xml), status, headers)
+
+
 
 class users_bookmark(BlankView):
 
@@ -194,39 +240,6 @@ class users_bookmark(BlankView):
                 status=404
             
         return emitter.run(etree.tostring(xml), status)
-
-
-    @method_decorator(csrf_exempt)
-    @method_decorator(validators.RateLimitDecorator)
-    def post(self, request, user, url_id, *args, **kwargs):
-        format = kwargs.get('format','')
-        emitter = get_emitter(request, format)  
-        
-        try:
-            user = User.objects.get(email=user)
-        except exceptions.ObjectDoesNotExist, e:
-            xml = messagexml('User does not exist')
-            status=404
-            return prepxml(etree.tostring(xml), status)
-
-        form = RawBookmarkForm(data=request.raw_post_data)
-        if form.is_valid():
-            uri = form.cleaned_data.get('uri')
-            categories = form.cleaned_data.get('categories')
-            comments = form.cleaned_data.get('comments')
-            for u in url_list:
-                bookmark_model, created = Bookmark.objects.get_or_create(url=u,)
-            
-            status = 201
-            num_added = len(url_list)
-            xml = messagexml("Added %s Records" % (num_added))
-        else:
-            xml = messagexml('Error with form validation: %s' % form.errors)
-            status = 500
-            print form.errors
-
-        return prepxml(etree.tostring(xml), status)
-
 
 
 class categories(BlankView):

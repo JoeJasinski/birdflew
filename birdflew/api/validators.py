@@ -14,6 +14,37 @@ input_url_message_spec = """<element name="urls" xmlns="http://relaxng.org/ns/st
 </element>
 """
 
+input_bookmark_message_spec = """<?xml version="1.0" encoding="UTF-8"?>
+<grammar ns="" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+  <start>
+    <element name="url">
+      <element name="uri">
+        <data type="anyURI"/>
+      </element>
+      <optional>
+        <element name="categories">
+          <oneOrMore>
+            <element name="category">
+              <data type="NCName"/>
+            </element>
+          </oneOrMore>
+        </element>
+      </optional>
+      <optional>
+        <element name="comments">
+          <oneOrMore>
+            <element name="comment">
+              <text/>
+            </element>
+          </oneOrMore>
+        </element>
+      </optional>
+    </element>
+  </start>
+</grammar>
+"""
+
+
 class BaseURL(object): 
     
     def __init__(self, *args, **kwargs):
@@ -82,6 +113,20 @@ def validate_url_format(url):
     burl = BaseURL(url_socket=url, domain=domain, port=port) 
 
     return (burl, messages)
+
+re_category = re.compile('^[\w\s-]+$')
+def validate_category(category):
+    messages = []
+    if not re_category.match(category):
+        messages = ['Invalid category string']
+    return (category, messages)
+
+re_comment = re.compile('^[\w\s\-+()#*%$@!,?&"\'/]+$')
+def validate_comment(category):
+    messages = []
+    if not re_comment.match(category):
+        messages = ['Invalid comment string']
+    return (category, messages)
 
 
 class RateLimitDecorator(object):

@@ -14,18 +14,22 @@ from django.utils.decorators import method_decorator
 from django.views.generic.base import View
 
 
-def prepxml(xml, status):
+def prepxml(xml, status, headers={}):
     
     decl = """<?xml version="1.0" encoding="utf-8"?>"""
     response = HttpResponse("%s%s" % (decl, xml), status=status, content_type="application/xml")
     response['Content-Disposition'] = 'inline; filename=output.xml'
+    for i, v in headers.items():
+        response[i] = v
     return response
 
-def prepxhtml(xml, status):
+def prepxhtml(xml, status, headers={}):
     
     decl = """<?xml version="1.0" encoding="utf-8"?>"""
     response = HttpResponse("%s%s" % (decl, xml), status=status, content_type="application/xhtml+xml")
     response['Content-Disposition'] = 'inline; filename=output.xhtml'
+    for i, v in headers.items():
+        response[i] = v
     return response
 
 
@@ -35,14 +39,14 @@ class Emitter(object):
 class XMLEmitter(Emitter):
     type = 'xml'
     
-    def run(self, xml, status):
-        return prepxml(xml, status)
+    def run(self, xml, status, headers={}):
+        return prepxml(xml, status, headers)
         
 class XHTMLEmitter(Emitter):
     type = 'xhtml'
     
-    def run(self, xml, status):
-        return prepxhtml(xml, status)
+    def run(self, xml, status, headers={}):
+        return prepxhtml(xml, status, headers)
 
 
 

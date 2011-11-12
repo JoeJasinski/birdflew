@@ -1,6 +1,8 @@
 from mptt.models import MPTTModel
 from django.db import models
 from django.core.cache import cache
+from django.core.urlresolvers import reverse
+from django.contrib.sites.models import Site
 from django.contrib.auth.models import User
 from django_extensions.db.fields import UUIDField
 from api import validators
@@ -15,7 +17,7 @@ class TrackingMixin(models.Model):
 
 
 class Comment(TrackingMixin):
-    bookmark = models.ForeignKey('bcore.Bookmark')
+    bookmark = models.ForeignKey('bcore.Bookmark', related_name='bookmark_comments')
     comment = models.TextField()
  
  
@@ -82,6 +84,12 @@ class Bookmark(MPTTModel, TrackingMixin):
     def get_errormessage(self):
         messages = cache.get("error_message_url_%s" % self.id, '')
         return messages
+    
+    def get_absolute_url(self):
+        site = Site.objects.get_current()
+        return "http://%s%s" % (site.domain, 
+            reverse('api_users_bookmark', args=[self.user.email, self.uuid]))
+    
     
 class UserInfo(models.Model):
     

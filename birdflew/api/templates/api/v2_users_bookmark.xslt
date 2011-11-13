@@ -36,7 +36,7 @@
     </html>
   </xsl:template>
  
-  <xsl:template match="category">
+  <xsl:template match="categories">
     <li class="category">
      <a>
       <xsl:attribute name="href"><xsl:value-of select="source" /></xsl:attribute>

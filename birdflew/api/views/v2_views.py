@@ -235,18 +235,6 @@ class users_bookmark(BlankView):
                 def CLASS(*args): # class is a reserved word in Python
                      return {"class":' '.join(args)}
                 
-                """
-                xml = E.div(CLASS('url'), 
-                        ABBR(CLASS("date-added"), title="%s" % bookmark.created.strftime('%Y-%m-%dT%H:%M:%S')), 
-                        A(bookmark.url, rel="source", href=bookmark.url), 
-                        UL(
-                           LI(*map(lambda x: A(x.category, href=x.category, rel="category"), bookmark.category_set.all()))
-                           ),
-                        UL(
-                           LI(*map(lambda x: A(x.comment, href=x.comment, rel="comments"), bookmark.comment_set.all()))
-                           )
-                        )
-                """
 
                 xml = URL(DATE_ADDED(bookmark.created.strftime('%Y-%m-%dT%H:%M:%S')),
                           SOURCE(bookmark.url),
@@ -262,6 +250,58 @@ class users_bookmark(BlankView):
                 status=404
             
         return emitter.run(etree.tostring(xml), status)
+
+
+    @method_decorator(csrf_exempt)
+    @method_decorator(validators.RateLimitDecorator)
+    def put(self, request, user, url_id, *args, **kwargs):
+        headers = {}
+        emitter = get_emitter(request, 'xml')  
+        
+        try:
+            user = User.objects.get(email=user)
+        except exceptions.ObjectDoesNotExist, e:
+            xml = messagexml('User does not exist')
+            status=404
+            return prepxml(etree.tostring(xml), status)
+
+        try:
+            bookmark_model = Bookmark.objects.get(uuid=url_id)
+        except exceptions.ObjectDoesNotExist, e:
+            xml = messagexml('Bookmark does not exist')
+            status=404
+            return prepxml(etree.tostring(xml), status)        
+
+        form = forms.RawBookmarkForm(data=request.raw_post_data)
+        if form.is_valid():
+            uri = form.cleaned_data.get('uri')
+            new_categories = form.cleaned_data.get('categories')
+            new_comments = form.cleaned_data.get('comments')
+            bookmark_model.url = uri.url_socket
+            bookmark_model.save()
+            existing_categories = [c.category for c in bookmark_model.categories.all()]
+            
+            for new_category in new_categories:
+                bookmark_model.categories.all()
+                if new_category not in existing_categories:
+                    category_obj, created = Category.objects.get_or_create(category__iexact=new_category,
+                                            defaults={'category':new_category})
+                    bookmark_model.categories.add(category_obj)
+            #    bookmark_model, created = Bookmark.objects.get_or_create(url=u,)
+            if new_comments:
+                bookmark_model.bookmark_comments.all().delete()
+                for new_comment in new_comments:
+                    bookmark_model.bookmark_comments.create(comment=new_comment) 
+            
+            status = 200
+            xml = messagexml("Bookmark Updated", type="success")
+            headers.update({'Location': bookmark_model.get_absolute_url() })
+        else:
+            xml = messagexml('Error with form validation: %s' % form.errors)
+            status = 500
+            print form.errors
+
+        return emitter.run(etree.tostring(xml), status, headers)
 
 
 class categories(BlankView):

@@ -185,3 +185,43 @@ class RawBookmarkForm(object):
             self.cleaned_data['comments'] = cleaned_comments 
         
         return (not bool(self.errors))
+    
+    
+class RawSubscribeForm(object):
+
+    def __init__(self, data=""):
+        self.raw_data = data
+        self.errors = []
+        
+
+    def is_valid(self):
+        self.errors = []
+        
+        try:
+            radx = etree.fromstring(self.raw_data)
+        except Exception, e:
+            self.errors.append(e.message)
+    
+        if not self.errors:
+            relax =  validators.input_message_spec_relaxing(validators.input_subscribe_message_spec)
+            result = relax.validate(radx)
+            if not result:
+                self.errors.append(relax.error_log)
+
+        if not self.errors:
+            try:
+                uri = map(lambda x: x.text, radx.xpath('/subscribe/callback-url'))[0]
+            except Exception, e:
+                self.errors.append(e.message)
+
+        if not self.errors:
+            cleaned_uri, messages = validators.validate_url_format(uri)
+            if messages:
+                self.errors += messages
+
+        if not self.errors:
+            self.cleaned_data = {}
+            self.cleaned_data['uri'] = cleaned_uri 
+        
+        return (not bool(self.errors))
+                  

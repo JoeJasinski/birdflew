@@ -96,4 +96,15 @@ class UserInfo(models.Model):
     user = models.ForeignKey('auth.User', unique=True)
     uuid = UUIDField(version=1)        
     
-User.profile = property(lambda u: UserInfo.objects.get_or_create(user=u)[0])          
+User.profile = property(lambda u: UserInfo.objects.get_or_create(user=u)[0])  
+
+
+class Subscriber(TrackingMixin, models.Model):
+
+    user = models.ForeignKey('auth.User', blank=True, null=True, related_name='user_subscriptions')
+    callback_url = models.CharField(max_length=255,)
+    uuid = UUIDField(version=1)
+
+    def __unicode__(self):
+        return "%s - %s" % (self.uuid, self.callback_url)
+      

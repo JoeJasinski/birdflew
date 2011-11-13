@@ -373,6 +373,35 @@ class category(BlankView):
         return emitter.run(etree.tostring(xml), status)
 
 
+class subscribe(BlankView):
+
+    @method_decorator(csrf_exempt)
+    @method_decorator(validators.RateLimitDecorator)
+    def post(self, request, user, *args, **kwargs):
+        format = kwargs.get('format','')
+        headers = {}
+        emitter = get_emitter(request, 'xml')  
+        
+        try:
+            user = User.objects.get(email=user)
+        except exceptions.ObjectDoesNotExist, e:
+            xml = messagexml('User does not exist')
+            status=404
+            return prepxml(etree.tostring(xml), status)
+ 
+        form = forms.RawSubscribeForm(data=request.raw_post_data)
+        if form.is_valid():
+            uri = form.cleaned_data.get('uri')
+            subscription_model, created = user.user_subscriptions.get_or_create(callback_url=uri.url_full, user=user)
+            xml = messagexml('Subscription added')
+            status=201            
+        else:
+            xml = messagexml('Error with form validation: %s' % form.errors)
+            status = 500
+
+        return emitter.run(etree.tostring(xml), status)
+
+
     """
     /v2/users/{alice}/urls/{5}/categories/
     GET <categories>

@@ -4,7 +4,7 @@ from mptt.admin import MPTTModelAdmin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 
-from .models import UrlModel, Bookmark, UserInfo, Comment, Category
+from .models import UrlModel, Bookmark, UserInfo, Comment, Category, Subscriber
 
 class CommentInline(admin.StackedInline):
     model = Comment
@@ -42,3 +42,9 @@ class CustomUserAdmin(UserAdmin):
 
 admin.site.unregister(User)
 admin.site.register(User, CustomUserAdmin)
+
+
+class SubscriberAdmin(admin.ModelAdmin):
+    pass
+
+admin.site.register(Subscriber, SubscriberAdmin)

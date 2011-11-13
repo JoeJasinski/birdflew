@@ -47,6 +47,10 @@ version_two_url = patterns('',
         {}, 
         name='api_category'),
 
+    url(r'^users/(?P<user>[-_\w.@]{1,30})/subscribe(?:\.(?P<format>[a-zA-Z]+))?$', csrf_exempt(v2_views.subscribe.as_view()), 
+        {}, 
+        name='api_users_subscribe'),
+
 )
 
 urlpatterns = patterns('',

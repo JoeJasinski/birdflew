@@ -60,6 +60,18 @@ input_user_message_spec = """<?xml version="1.0" encoding="UTF-8"?>
 
 """
 
+input_subscribe_message_spec = """<?xml version="1.0" encoding="UTF-8"?>
+<grammar ns="" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+  <start>
+    <element name="subscribe">
+      <element name="callback-url">
+        <data type="anyURI"/>
+      </element>
+    </element>
+  </start>
+</grammar>
+"""
+
 
 class BaseURL(object): 
     
@@ -67,8 +79,8 @@ class BaseURL(object):
         self.url_socket = kwargs.get('url_socket','')
         self.port = kwargs.get('port','')
         self.domain = kwargs.get('domain','')
+        self.url_full = kwargs.get('url_full','')        
      
-
 
 def input_message_spec_relaxing(spec):
     xml = etree.fromstring(spec)
@@ -98,7 +110,7 @@ def validate_email(email):
     return (email, messages)
     
 
-def validate_url_format(url):
+def validate_url_format(url, keep_path=False):
 
     # normalize the output
     messages = []
@@ -133,11 +145,13 @@ def validate_url_format(url):
         if not port:
             port = 80
     
-    url = u"%s://%s:%s" % (up.scheme, domain, port)
+    url_socket = u"%s://%s:%s" % (up.scheme, domain, port)
+    url_full = u'%s://%s:%s%s' % (up.scheme, domain, port, up.path)
 
-    burl = BaseURL(url_socket=url, domain=domain, port=port) 
+    burl = BaseURL(url_socket=url_socket, url_full=url_full, domain=domain, port=port) 
 
     return (burl, messages)
+
 
 re_category = re.compile('^[\w\s-]+$')
 def validate_category(category):
@@ -145,6 +159,7 @@ def validate_category(category):
     if not re_category.match(category):
         messages = ['Invalid category string']
     return (category, messages)
+
 
 re_comment = re.compile('^[\w\s\-+()#*%$@!,?&"\'/]+$')
 def validate_comment(category):

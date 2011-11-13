@@ -22,6 +22,7 @@
           <a>
            <xsl:attribute name="rel">source</xsl:attribute>
            <xsl:attribute name="href"><xsl:value-of select="source" /></xsl:attribute>
+           <xsl:value-of select="source"/>
           </a>
           <ul>Categories
             <xsl:apply-templates select="categories">

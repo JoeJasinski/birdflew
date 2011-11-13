@@ -27,6 +27,7 @@ from lxml.builder import ElementMaker
 users_list_cache_key = 'api_users_list'
 
 def get_emitter(request, format=None):
+    #return XMLEmitter()
     if format == 'xml':
         return XMLEmitter()
     else:
@@ -149,7 +150,7 @@ class users_bookmarks(BlankView):
             ID = E.id
             status=200
             xml = URLS(*map(lambda x: URL(
-                                          URI("http://%s%s" % (site.domain, reverse('api_users_bookmark', args=[user.email, x.uuid,]))), 
+                                          URI(x.get_absolute_url()), 
                                           BOOKMARK(x.url)), url_list))
 
             if emitter.type == 'xhtml': 
@@ -250,7 +251,7 @@ class users_bookmark(BlankView):
                 xml = URL(DATE_ADDED(bookmark.created.strftime('%Y-%m-%dT%H:%M:%S')),
                           SOURCE(bookmark.url),
                           CATEGORIES(*map(lambda x: CAGEGORY(x.category), bookmark.categories.all())),
-                          COMMENTS(*map(lambda x: COMMENT(x.comment), bookmark.comment_set.all())),
+                          COMMENTS(*map(lambda x: COMMENT(x.comment), bookmark.bookmark_comments.all())),
                           )
 
                 if emitter.type == 'xhtml': 
@@ -321,16 +322,13 @@ class category(BlankView):
             NAME = E.name
             LINK = E.link
 
-            xml = URLS(*map(lambda b: URL(  URI(
-            "http://%s%s" % ( site.domain, reverse('api_users_bookmark', args=[b.user.email, b.uuid]))
+            xml = URLS(*map(lambda b: URL(  URI(b.get_absolute_url()
                                     ), LINK(b.url)
                                 ), bookmarks))
                           
             if emitter.type == 'xhtml': 
                 xml = xml_to_xslt(xml=xml, template="api/v2_category.xslt", 
-                              context={'title':'Category Bookmarks','heading':'Category Bookmarks'})                    
-
-
+                              context={'title':'Category Bookmarks','heading':'Category Bookmarks'})
         
         return emitter.run(etree.tostring(xml), status)
 

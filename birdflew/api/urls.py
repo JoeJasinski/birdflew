@@ -35,7 +35,7 @@ version_two_url = patterns('',
         {}, 
         name='api_users_bookmarks'),
 
-    url(r'^users/(?P<user>[-_\w.@]{1,30})/urls/(?P<url_id>[-_\w.@%]{1,100})$', csrf_exempt(v2_views.users_bookmark.as_view()), 
+    url(r'^users/(?P<user>[-_\w.@]{1,30})/urls/(?P<url_id>[-_\w@%]{1,100})(?:\.(?P<format>[a-zA-Z]+))?$', csrf_exempt(v2_views.users_bookmark.as_view()), 
         {}, 
         name='api_users_bookmark'),
 

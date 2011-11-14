@@ -1,15 +1,128 @@
-<html>
-  <head>
-    <title>Project Report</title>
-    <link href="main.css" rel="stylesheet" type="text/css"></link>
-  </head>
-  <body>
-    <h1>Project Report</h1>
-    <p>
-      Put your project report in this directory.  Please use HTML (not Word or PDF).  Please make sure that
-      <code>index.html</code> is the starting point for your report.  You can use more than one HTML file if you want, but it is
-      not required.  You can add images to this directory and use relative hyperlinks to the images.  You can modify the CSS if
-      you want.
-    </p>
-  </body>
-</html>
+<h1>Birdflew Peer-to-Peer Social Bookmark Project</h1>
+<h2>SE560</h2>
+<h3>Report Draft</h3>
+<h4>Summary</h4>
+<p>The hostname for this node currently resides at http://ec2-50-19-183-238.compute-1.amazonaws.com.  Time permitting, I intend to give it a shorter domain.<br />
+</p>
+<p>Currently, the node is being hosted off of an amazon ec2 instance.  The application is built using the Python-based web framework Django.  It uses the Nginx webserver for static content hosting, fastcgi/flup for dynamic content, PostgreSQL for the persistence layer, lxml for xml parsing/rendering, and redis for caching.<br />
+</p>
+<p>Currently, the main user that I have on the site by default is joe@joe.com.  This user can be accessed by querying the following url:</p>
+<p>http://ec2-50-19-183-238.compute-1.amazonaws.com/v2/users/joe@joe.com</p>
+<p>The current API methods are functioning according to the specification.  They probably need a bit more debugging but are working as far as I am aware.  Most of the v2 GET urls support a .xml extension to display the data in xml format.  By default, urls are stored in </p>
+<h4>Features</h4>
+<ol>
+<li>Support for xhtml microformat output</li>
+<li>Admin Interface for browsing persisted data (at /admin/). </li>
+<li>Status page at site root (/) displaying neighbor node status</li>
+<li>XML RelaxNG validation of POSTed data</li>
+<li>Programmatically created XML</li>
+<li>XML to XHTML conversion using XSLT</li>
+</ol>
+<h4>URL Methods</h4>
+<ul>
+<li>
+<p>/v1/whoami     GET 
+--   Input: none
+--   Output: plain text email of node owner</p>
+</li>
+<li>
+<p>/v1/lookupUrls  GET 
+--  Input: none
+--  Output:  List of node urls
+    &lt;urls>
+        &lt;url>http://50.17.226.103:80&lt;/url>
+        &lt;url>http://afternoon-snow-4694.herokuapp.com:80&lt;/url>
+        ....
+    &lt;/urls></p>
+</li>
+<li>
+<p>/v1/registerUrls  POST</p>
+</li>
+<li>
+<p>/v2/users  GET
+-- Input: none
+-- Output: List of users </p>
+</li>
+<li>
+<p>/v2/users  POST
+--  Input: 
+    <pre>
+    &lt;user>
+        &lt;email>bob@whitequail.org&lt;/email>
+        &lt;node>http://bobs-whizbang.elasticbeanstalk.com&lt;/node>
+    &lt;/user>
+    </pre>
+-- Output: 
+    <pre>
+    &lt;?xml version="1.0" encoding="utf-8"?&gt;
+        &lt;message>&lt;success>User Added&lt;/success>
+    &lt;/message>
+    </pre></p>
+</li>
+<li>
+<p>/v2/users/{username}  GET
+-- Input: none
+-- Output: user detail for a specific user</p>
+</li>
+<li>
+<p>/v2/users/{username}/urls  GET
+-- Input: none
+-- Output: list all users urls</p>
+</li>
+<li>
+<p>/v2/users/{username}/urls  POST
+-- Input: a required uri, an optional list of categories, and an optional list of comments
+    <pre>
+    &lt;url>
+        &lt;uri>http://somewhere.com&lt;/uri>
+        &lt;categories>
+           &lt;category>News&lt;/category>
+           &lt;category>Sports&lt;/category>
+        &lt;/categories>
+        &lt;comments>
+           &lt;comment>This is comment 1&lt;/comment>
+           &lt;comment>This is comment 2&lt;/comment>
+        &lt;/comments>
+    &lt;/url>
+    </pre>
+-- Output: 
+    <pre>
+    &lt;?xml version="1.0" encoding="utf-8"?&gt;
+      &lt;message>&lt;success>Bookmark Added&lt;/success>&lt;/message>
+    </pre></p>
+</li>
+<li>
+<p>/v2/users/{username}/urls/{url_id}  GET
+-- Input: none
+-- Output: a specific url for a given user</p>
+</li>
+<li>
+<p>/v2/categories  GET
+-- Input: none
+-- Output: a list of available categories </p>
+</li>
+<li>
+<p>/v2/categories/{category}  GET
+-- Input: none
+-- Output: details about a category</p>
+</li>
+<li>
+<p>/v2/users/{username}/subscribe  POST
+-- input: 
+    <pre>
+    &lt;subscribe>
+        &lt;callback-url>http://examplenode.org/v2/users/alice@springs.com/notify&lt;/callback-url>
+    &lt;/subscribe>
+    </pre>
+-- Output:
+    <pre>
+    &lt;?xml version="1.0" encoding="utf-8"?&gt;&lt;message>&lt;success>Subscription added&lt;/success>&lt;/message>
+    </pre></p>
+</li>
+</ul>
+<h4>TODO</h4>
+<ol>
+<li>Basic support for the callback notifications exist, but need more debugging.</li>
+<li>Need to implement GET /v2/users/{user}/notifications</li>
+<li>More testing needed</li>
+</ol>

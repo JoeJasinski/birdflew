@@ -393,7 +393,7 @@ class subscribe(BlankView):
         if form.is_valid():
             uri = form.cleaned_data.get('uri')
             subscription_model, created = user.user_subscriptions.get_or_create(callback_url=uri.url_full, user=user)
-            xml = messagexml('Subscription added')
+            xml = messagexml('Subscription added', type="success")
             status=201            
         else:
             xml = messagexml('Error with form validation: %s' % form.errors)

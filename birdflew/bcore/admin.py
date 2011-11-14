@@ -21,6 +21,10 @@ class CategoryAdmin(admin.ModelAdmin):
 
 admin.site.register(Category, CategoryAdmin)
 
+class BookmarkInline(admin.StackedInline):
+    model = Bookmark
+    extra = 0
+
 class BookmarkAdmin(MPTTModelAdmin):
     list_display = ['url','user','parent','created','modified']
     inlines = [CommentInline, ]
@@ -34,17 +38,22 @@ class UserInfoInline(admin.StackedInline):
     extra = 0
 
 
-class CustomUserAdmin(UserAdmin):
-    list_display = UserAdmin.list_display + ('date_joined','last_login')
-    list_filter = UserAdmin.list_filter + ('is_active',)
-    inlines = [UserInfoInline,]
-
-
-admin.site.unregister(User)
-admin.site.register(User, CustomUserAdmin)
-
+class SubscriberInline(admin.StackedInline):
+    model = Subscriber
+    extra = 0
 
 class SubscriberAdmin(admin.ModelAdmin):
     pass
 
 admin.site.register(Subscriber, SubscriberAdmin)
+
+
+
+class CustomUserAdmin(UserAdmin):
+    list_display = UserAdmin.list_display + ('date_joined','last_login')
+    list_filter = UserAdmin.list_filter + ('is_active',)
+    inlines = [UserInfoInline,BookmarkInline,SubscriberInline]
+
+
+admin.site.unregister(User)
+admin.site.register(User, CustomUserAdmin)

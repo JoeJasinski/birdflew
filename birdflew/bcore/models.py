@@ -1,3 +1,4 @@
+import urllib2, socket, threading
 from mptt.models import MPTTModel
 from django.db import models
 from django.core.cache import cache
@@ -5,7 +6,12 @@ from django.core.urlresolvers import reverse
 from django.contrib.sites.models import Site
 from django.contrib.auth.models import User
 from django_extensions.db.fields import UUIDField
+from django.dispatch import receiver
+from django.db.models import signals
 from api import validators
+
+from lxml import etree
+from lxml.builder import ElementMaker 
 
 class TrackingMixin(models.Model):
 
@@ -107,4 +113,37 @@ class Subscriber(TrackingMixin, models.Model):
 
     def __unicode__(self):
         return "%s - %s" % (self.uuid, self.callback_url)
-      
+
+   
+def notify_subscribers_thread(user, xml, **kwargs):   
+
+    for subscriber in Subscriber.objects.filter(user=user):
+
+        request = urllib2.Request(subscriber.callback_url, data=etree.tostring(xml, pretty_print=True ))
+        try:
+            response = urllib2.urlopen(request)
+        except urllib2.HTTPError, e:
+            pass
+        except urllib2.URLError, e:
+            pass
+
+
+       
+@receiver(signals.post_save, sender=Bookmark)
+def notify_subscribers(sender, instance, **kwargs):
+    user = instance.user
+    bookmark = instance
+
+    timeout = 10
+    socket.setdefaulttimeout(timeout)
+
+    E = ElementMaker()
+    NOTICE = E.notice
+    SUBSCRIPTION = E.subscription
+    UPDATE = E.update
+    xml = NOTICE(SUBSCRIPTION(user.get_absolute_url_full()), UPDATE(bookmark.get_absolute_url()))
+    
+    t = threading.Thread(target=notify_subscribers_thread,
+                         args=[user, xml])
+
+            

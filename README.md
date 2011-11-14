@@ -2,27 +2,27 @@
 Share files using BirdFlew!
 
 
-ENVIORNMENT SETUP
+#### ENVIORNMENT SETUP
 
-1) apt-get install python-virtualenv libxml libxml-dev libxslt libxslt-dev
+1. apt-get install python-virtualenv libxml libxml-dev libxslt libxslt-dev
 
-2) virtualenv --no-site-packges p2p
+2. virtualenv --no-site-packges p2p
 
-3) cd p2p; . ./bin/activate
+3. cd p2p; . ./bin/activate
 
-4) mkdir proj; cd proj
+4. mkdir proj; cd proj
 
-5) git clone git@github.com:DePaulSE560/jasinskij.git birdflew; cd birdflew
+5. git clone git@github.com:DePaulSE560/jasinskij.git birdflew; cd birdflew
 
-6) pip install -r requirements.pip
+6. pip install -r requirements.pip
 
-7) ./manage.py syncdb 
+7. ./manage.py syncdb 
 
 
 
-DETAIL SERVER SETUP
-Create Amazon instance using AMI: ebs/ubuntu-images/ubuntu-natty-11.04-i386-server-20110426 (ami-06ad526f)
+#### DETAIL SERVER SETUP
 
+    Create Amazon instance using AMI: ebs/ubuntu-images/ubuntu-natty-11.04-i386-server-20110426 (ami-06ad526f)
 
     ssh -i xxxxxx.pem ubuntu@ec2-xxxxxxxxxxx.compute-1.amazonaws.com
     
@@ -30,7 +30,7 @@ Create Amazon instance using AMI: ebs/ubuntu-images/ubuntu-natty-11.04-i386-serv
     sudo adduser joe 
       # - follow prompts 
     sudo usermod -G admin -a joe
-	sudo usermod -G worker -a joe
+    sudo usermod -G worker -a joe
       
     # install needed apt packages
     sudo aptitude install python-virtualenv git build-essential python-dev 
@@ -74,28 +74,28 @@ Create Amazon instance using AMI: ebs/ubuntu-images/ubuntu-natty-11.04-i386-serv
     pip install -r requirements.pip
     cd birdflew
 
-	# setup skelaton files
+    # setup skelaton files
     cd ${VIRTUAL_ENV}
     cp -r ${VIRTUAL_ENV}/proj/skel/nginx/ ${VIRTUAL_ENV}/etc/nginx
     cp -r ${VIRTUAL_ENV}/proj/skel/bfsettings/ ${VIRTUAL_ENV}/etc/django/
     echo "${VIRTUAL_ENV}/etc/django/" >> ${VIRTUAL_ENV}/lib/python2.7/site-packages/birdflew.pth
 
-	# grant permission of all project files to app user
+    # grant permission of all project files to app user
     sudo chown -R p2p:worker ${VIRTUAL_ENV}
-	sudo chmod -R g+w ${VIRTUAL_ENV}
+    sudo chmod -R g+w ${VIRTUAL_ENV}
 	
-	# log in as app user and sync the database
-	sudo su - p2p 
-	cd /sites/p2p/
-	. ./bin/activate
-	cd proj/birdflew
+    # log in as app user and sync the database
+    sudo su - p2p 
+    cd /sites/p2p/
+    . ./bin/activate
+    cd proj/birdflew
     ./manage syncdb 
       # - follow prompts 
     ./manage collectstatic
       # - follow prompts 
     exit
     
-	# prep start scripts and execute
+    # prep start scripts and execute
     cd ${VIRTUAL_ENV}/bin/
     ln -s ${VIRTUAL_ENV}/proj/skel/bin/start_nginx.sh
     ln -s ${VIRTUAL_ENV}/proj/skel/bin/start_fastcgi.sh

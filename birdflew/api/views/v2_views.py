@@ -14,7 +14,7 @@ from django.utils.decorators import method_decorator
 
 from django.contrib.auth.models import User
 
-from bcore.models import UrlModel, Category, Bookmark
+from bcore.models import UrlModel, Category, Bookmark, Notification
 from api import validators, forms
 from api.views import (BlankView, prepxml, prepxhtml, messagexml, xml_to_xslt,
                        XMLEmitter, XHTMLEmitter)
@@ -222,7 +222,6 @@ class users_bookmark(BlankView):
                 bookmark = user.user_bookmarks.get(uuid=url_id)
                 E = ElementMaker()
                 URL = E.url
-                DATE_ADDED = E.date_added
                 SOURCE = E.source
                 CATEGORIES = E.categories
                 CAGEGORY = E.category
@@ -402,36 +401,70 @@ class subscribe(BlankView):
         return emitter.run(etree.tostring(xml), status)
 
 
-    """
-    /v2/users/{alice}/urls/{5}/categories/
-    GET <categories>
-           <category></category>
-           ...
-        </categories
-        
-    PUT - same xml document 
-    
-    
-    def post(self, request, user, *args, **kwargs):
-        POST THIS
-        <url>
-          <url>http://www.google.com</url>
-          <categories>
-            <category></category>?
-          </categories>
-          <comments>
-            <comment></comment>?
-          </comments>
-        <urls>
-        RETURN THIS 
-        - 201 Created
-    """
+class notify(BlankView):
 
-"""
-class user_subscriptions(self, request, user, *args, **kwargs):
-    8:15 - 8:30+  10/31/2011
-    - add a subscription
-      - give callback URL
-    - remove subscription 
-      -  
-"""
+    @method_decorator(csrf_exempt)
+    @method_decorator(validators.RateLimitDecorator)
+    def post(self, request, user, *args, **kwargs):
+        headers = {}
+        emitter = get_emitter(request, 'xml')  
+
+        try:
+            user = User.objects.get(email=user)
+        except exceptions.ObjectDoesNotExist, e:
+            xml = messagexml('User does not exist')
+            status=404
+            return prepxml(etree.tostring(xml), status)
+        
+        form = forms.RawNotifyForm(data=request.raw_post_data)
+        if form.is_valid():
+            subscription = form.cleaned_data.get('subscription')
+            bookmark = form.cleaned_data.get('bookmark')
+            n = Notification(user=user, subscription=subscription, bookmark=bookmark)
+            n.save()
+            # subscription_model, created = user.user_subscriptions.get_or_create(callback_url=uri.url_full, user=user)
+            xml = messagexml('Notification added', type="success")
+            status=201            
+        else:
+            xml = messagexml('Error with form validation: %s' % form.errors)
+            status = 500
+
+        return emitter.run(etree.tostring(xml), status)
+
+
+class notifications(BlankView):
+
+    @method_decorator(validators.RateLimitDecorator)
+    def get(self, request, user, *args, **kwargs):
+        headers = {}
+        format = kwargs.get('format','')
+        emitter = get_emitter(request, format)
+   
+        try:
+            user = User.objects.get(email=user)
+        except exceptions.ObjectDoesNotExist, e:
+            xml = messagexml('User does not exist')
+            status=404
+            return prepxml(etree.tostring(xml), status)
+        else:
+            E = ElementMaker()            
+            NOTIFICATION = E.notification
+            NOTIFICATIONS = E.notifications
+            SUBSCRIPTION = E.subscription
+            UPDATE = E.update
+            UPDATE_DATE = getattr(E, 'update-date')
+            UPDATE_DATE_FMT = getattr(E, 'update-date-formated')
+            xml = NOTIFICATIONS(*map(lambda x: NOTIFICATION(
+                                        UPDATE_DATE(x.modified.strftime('%Y-%m-%dT%H:%M:%S')),
+                                        UPDATE(x.bookmark),
+                                        UPDATE_DATE_FMT(x.modified.strftime("%B %e")),
+                                        SUBSCRIPTION(x.subscription),
+                                ), user.notification_set.all()))
+            status = 200
+            
+            if emitter.type == 'xhtml': 
+                xml = xml_to_xslt(xml=xml, template="api/v2_notifications.xslt", 
+                              context={'title':'Notifications','heading':'Notifications'})
+           
+        return emitter.run(etree.tostring(xml), status)
+

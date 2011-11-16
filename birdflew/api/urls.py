@@ -51,6 +51,17 @@ version_two_url = patterns('',
         {}, 
         name='api_users_subscribe'),
 
+
+    url(r'^users/(?P<user>[-_\w.@]{1,30})/notify$', csrf_exempt(v2_views.notify.as_view()), 
+        {}, 
+        name='api_users_notify'),
+
+
+    url(r'^users/(?P<user>[-_\w.@]{1,30})/notifications(?:\.(?P<format>[a-zA-Z]+))?$', csrf_exempt(v2_views.notifications.as_view()), 
+        {}, 
+        name='api_users_notifications'),
+
+
 )
 
 urlpatterns = patterns('',

@@ -4,7 +4,7 @@ from mptt.admin import MPTTModelAdmin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 
-from .models import UrlModel, Bookmark, UserInfo, Comment, Category, Subscriber
+from .models import UrlModel, Bookmark, UserInfo, Comment, Category, Subscriber, Notification
 
 class CommentInline(admin.StackedInline):
     model = Comment
@@ -47,6 +47,12 @@ class SubscriberAdmin(admin.ModelAdmin):
 
 admin.site.register(Subscriber, SubscriberAdmin)
 
+
+class NotificationAdmin(admin.ModelAdmin):
+    readonly_fields = ['created','modified']
+    list_display = ['bookmark','created','modified']
+
+admin.site.register(Notification, NotificationAdmin)
 
 
 class CustomUserAdmin(UserAdmin):

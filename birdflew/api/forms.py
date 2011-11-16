@@ -1,7 +1,9 @@
-import re
+import re, urlparse
 from lxml import etree
 from django import forms 
+from django.core.urlresolvers import resolve
 from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
 from . import validators
 
 class RawUrlForm(object):
@@ -224,4 +226,78 @@ class RawSubscribeForm(object):
             self.cleaned_data['uri'] = cleaned_uri 
         
         return (not bool(self.errors))
-                  
+
+
+
+class RawNotifyForm(object):
+    
+    def __init__(self, data=""):
+        self.raw_data = data
+        self.errors = []
+    
+
+    def is_valid(self):
+        self.errors = []
+        user = None
+        radx = None
+        subscription = None
+        bookmark = None
+        cleaned_subscription = None
+        cleaned_bookmark = None
+        cleand_user = None
+        
+        try:
+            radx = etree.fromstring(self.raw_data)
+        except Exception, e:
+            self.errors.append(e.message)
+    
+        if not self.errors:
+            relax =  validators.input_message_spec_relaxing(validators.input_notice_message_spec)
+            result = relax.validate(radx)
+            if not result:
+                self.errors.append(relax.error_log)
+
+        if not self.errors:
+            try:
+                subscription = map(lambda x: x.text, radx.xpath('/notice/subscription'))[0]
+            except Exception, e:
+                self.errors.append(e.message)
+
+        if not self.errors:
+            try:
+                bookmark = map(lambda x: x.text, radx.xpath('/notice/update'))[0]
+            except Exception, e:
+                self.errors.append(e.message)
+
+        if not self.errors:
+            cleaned_subscription, messages = validators.validate_url_format(subscription)
+            cleaned_subscription = cleaned_subscription.url_full
+            if messages:
+                self.errors += messages
+
+        if not self.errors:
+            cleaned_bookmark, messages = validators.validate_url_format(bookmark)
+            cleaned_bookmark = cleaned_bookmark.url_full
+            if messages:
+                self.errors += messages
+
+        #if not self.errors:
+        #    try:
+        #        user = resolve(urlparse.urlparse(cleaned_subscription).path)[2]['user']
+        #    except Exception, e:
+        #        self.errors.append(e.message)
+        
+        #if not self.errors:
+        #    try:
+        #        cleaned_user = User.objects.get(email=user)
+        #    except ObjectDoesNotExist, e:
+        #        self.errors.append(e.message)                
+                
+        if not self.errors:
+            self.cleaned_data = {}
+            self.cleaned_data['subscription'] = cleaned_subscription 
+            self.cleaned_data['bookmark'] = cleaned_bookmark
+            #self.cleaned_data['user'] = cleaned_user
+        
+        return (not bool(self.errors)) 
+             

@@ -146,4 +146,13 @@ def notify_subscribers(sender, instance, **kwargs):
     t = threading.Thread(target=notify_subscribers_thread,
                          args=[user, xml])
 
-            
+
+class Notification(TrackingMixin, models.Model):   
+    
+    user = models.ForeignKey('auth.User')
+    subscription = models.CharField(u'Remote Subscription', max_length=255)
+    bookmark = models.CharField(u'Updated Bookmark', max_length=255)
+
+    def __unicode__(self):
+        return "%s" % (self.subscription,)
+       

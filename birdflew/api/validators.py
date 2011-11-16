@@ -72,6 +72,21 @@ input_subscribe_message_spec = """<?xml version="1.0" encoding="UTF-8"?>
 </grammar>
 """
 
+input_notice_message_spec="""<?xml version="1.0" encoding="UTF-8"?>
+<grammar ns="" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+  <start>
+    <element name="notice">
+      <element name="subscription">
+        <data type="anyURI"/>
+      </element>
+      <element name="update">
+        <data type="anyURI"/>
+      </element>
+    </element>
+  </start>
+</grammar>
+"""
+
 
 class BaseURL(object): 
     

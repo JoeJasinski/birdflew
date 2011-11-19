@@ -38,6 +38,12 @@ class Category(TrackingMixin):
     def __unicode__(self):
         return self.category
 
+    def get_absolute_url(self):
+        site = Site.objects.get_current()
+        return "http://%s%s" % (site.domain, 
+            reverse('api_category', args=[self.category, ]))
+    
+
 class UrlModel(MPTTModel, TrackingMixin):
     
     parent = models.ForeignKey('self', blank=True, null=True, related_name='children')

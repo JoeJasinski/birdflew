@@ -25,7 +25,7 @@
            <xsl:value-of select="source"/>
           </a>
           <ul>Categories
-            <xsl:apply-templates select="categories">
+            <xsl:apply-templates select="categories/category">
               <xsl:sort select="category" />
             </xsl:apply-templates>          
           </ul>
@@ -36,11 +36,11 @@
     </html>
   </xsl:template>
  
-  <xsl:template match="categories">
+  <xsl:template match="category">
     <li class="category">
      <a>
-      <xsl:attribute name="href"><xsl:value-of select="source" /></xsl:attribute>
-      <xsl:attribute name="rel">category</xsl:attribute><xsl:value-of select="category"/>
+      <xsl:attribute name="href"><xsl:value-of select="uri" /></xsl:attribute>
+      <xsl:attribute name="rel">category</xsl:attribute><xsl:value-of select="name"/>
      </a>
     </li>
   </xsl:template>

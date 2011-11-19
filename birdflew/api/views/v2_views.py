@@ -222,6 +222,8 @@ class users_bookmark(BlankView):
                 bookmark = user.user_bookmarks.get(uuid=url_id)
                 E = ElementMaker()
                 URL = E.url
+                URI = E.uri
+                NAME = E.name
                 SOURCE = E.source
                 CATEGORIES = E.categories
                 CAGEGORY = E.category
@@ -237,7 +239,7 @@ class users_bookmark(BlankView):
 
                 xml = URL(DATE_ADDED(bookmark.created.strftime('%Y-%m-%dT%H:%M:%S')),
                           SOURCE(bookmark.url),
-                          CATEGORIES(*map(lambda x: CAGEGORY(x.category), bookmark.categories.all())),
+                          CATEGORIES(*map(lambda x: CAGEGORY(URI(x.get_absolute_url()), NAME(x.category) ), bookmark.categories.all())),
                           COMMENTS(*map(lambda x: COMMENT(x.comment), bookmark.bookmark_comments.all())),
                           )
 

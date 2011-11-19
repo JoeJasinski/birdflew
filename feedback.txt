@@ -1,0 +1,4 @@
+It looks like you have the code under control.  I would suggest that now is a good time to capture screenshots of parts
+working and put them into the project report.  That's the most important part for grading!  You can regard capturing 
+screenshots/evidence as debugging.
+

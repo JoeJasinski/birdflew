@@ -1,7 +1,8 @@
 <h1>ENDPOINT http://likecite.com/v2/users</h1>
 <hr />
 <h2>GET (xhtml)</h2>
-When preforming a GET to this url endpiont, a list of users is displayed. By default, they are represented in an xhtml format. 
+<p>When preforming a GET to this url endpiont, a list of users is displayed. By default, they are represented in an xhtml format. </p>
+<p>Usage Example:</p>
 <p><img src="GET_users.jpg" width="844" height="550" alt="users" /></p>
 <p><img src="GET_users_headers.jpg" width="851" height="247" alt="users" /></p>
 <p><img src="GET_users_body.jpg" width="847" height="243" alt="users" /></p>
@@ -31,10 +32,12 @@ When preforming a GET to this url endpiont, a list of users is displayed. By def
 &lt;/html&gt;</p>
 <hr />
 <h2>GET (xml)</h2>
+<p>The GET request also supports the optional XML representation of the users resource. Because this feature was deemed optional, I chose to utilize the .xml extension to delineate the xml fromat, rather than the header. I made this decision to make it easier to browse. </p>
+<p>Usage Example:</p>
 <p><img src="GET_users_xml.jpg" width="846" height="555" alt="users_xml" /></p>
 <p><img src="GET_users_xml_headers.jpg" width="850" height="248" alt="users_xml" /></p>
 <p><img src="GET_users_xml_body.jpg" width="843" height="237" alt="users_xml" /></p>
-<p>&nbsp;</p>
+<p>Here is an example of the xml format that is returned after &quot;pretty printing&quot;. </p>
 <p>&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;<br />
   &lt;users&gt;<br />
 &lt;user&gt;<br />
@@ -56,7 +59,11 @@ When preforming a GET to this url endpiont, a list of users is displayed. By def
 &lt;/users&gt;</p>
 <hr />
 <h2>POST (xml)</h2>
+<p>This endpoint creates a user based on  xml formated input.</p>
+<p>The POSTed XML is validated for structure and correctness; it is validate against a RelaxNG schema. If a user with the given email address exists, an error message will be returned. </p>
+<p>Usage Example:</p>
 <p><img src="POST_users.jpg" width="850" height="450" alt="users" /></p>
 <p><img src="POST_users_headers.jpg" width="850" height="236" alt="users" /></p>
+<p>This screenshot of the Django admin shows that the user was successfully added. </p>
 <p><img src="POST_users_admin.jpg" width="677" height="316" alt="users" /></p>
 <p>&nbsp;</p>

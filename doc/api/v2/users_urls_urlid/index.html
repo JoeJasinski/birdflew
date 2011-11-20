@@ -1,10 +1,13 @@
 <h1>ENDPOINT http://likecite.com/v2/users/{email}/urls/{urlid}</h1>
 <hr />
 <h2>GET (xhtml)</h2>
+<p>This endpoint displays detail information about the bookmark provied in the url. The {email} refers to the email address of a given user on the service node. The {urlid} refers to a locally unique identifier for the bookmark resource. When a bookmark is first created, this webservice creates a UUID that serves as this identifier. </p>
+<p>The resulting response will not only display the url formation, but will display any categories associated with it. </p>
+<p>Usage Example:</p>
 <h2><img src="GET_users_urls_urlid.jpg" width="850" height="556" alt="users_url_urid" /></h2>
 <p><img src="GET_users_urls_urlid_headers.jpg" width="857" height="213" alt="users_url_urid" /></p>
 <p><img src="GET_users_urls_urlid_body.jpg" width="850" height="238" alt="users_url_urid" /></p>
-<p>&nbsp;</p>
+<p>Below is a &quot;pretty-printed&quot; representation of the returned xhtml. </p>
 <p>&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;<br />
   &lt;html xmlns=&quot;http://www.w3.org/1999/xhtml&quot;&gt;<br />
 &lt;head&gt;<br />
@@ -24,9 +27,12 @@
 &lt;/html&gt;</p>
 <hr />
 <h2>GET (xml)</h2>
+<p>By appending an .xml to the endpoint url, a XML representation will be returned. </p>
+<p>Usage Example:</p>
 <p><img src="GET_users_urls_urlid_xml.jpg" width="850" height="568" alt="users_urls_urlid_xml" /></p>
 <p><img src="GET_users_urls_urlid_xml_headers.jpg" width="850" height="214" alt="users_urls_urlid_xml" /></p>
 <p><img src="GET_users_urls_urlid_xml_body.jpg" width="850" height="128" alt="users_urls_urlid_xml" /></p>
+<p>Below is a &quot;pretty-printed&quot; representation of the returned xml. </p>
 <p>&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;<br />
   &lt;url&gt;<br />
 &lt;date-added&gt;2011-11-19T15:29:59&lt;/date-added&gt;<br />
@@ -48,8 +54,11 @@
 &lt;/url&gt;</p>
 <hr />
 <h2>PUT (xml)</h2>
+<p>PUTing to this endpoint will modify an existing bookmark. Bookmarks are looked up using their {urlid}and must belong to the existing user specified by the {email} url componant. Optional 'comment' and 'category' tags may be added to this xml to associate categories and comments with the new bookmark.  Comments are associated with the bookmark via a one-to-may relationship; categories are associated with a bookmark via a many-to-many relationship. If a specified category does not exist, a new category will be created. This service validates the PUT XML for syntax and for adherence to the RelaxNG spec. The url, category, and comment data is validated upon submission. The url, comment, and category fields will be updated if the data provided differs from the existing data. </p>
+<p>Usage Example:</p>
 <p><img src="PUT_users_urls_urlid.jpg" width="850" height="432" alt="users_urls_urlid" /></p>
 <p><img src="PUT_users_urls_urlid_headers.jpg" width="850" height="225" alt="users_urls_urlid" /></p>
+<p>A screenshot of the Django admin showing that the URL was updated.</p>
 <p><img src="PUT_users_urls_urlid_admin1.jpg" width="859" height="414" alt="users_urls_urlid" /></p>
 <p><img src="PUT_users_urls_urlid_admin2.jpg" width="850" height="57" alt="users_urls_urlid" /></p>
 <p>&nbsp;</p>

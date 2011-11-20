@@ -1,9 +1,12 @@
 <h1>ENDPOINT http://likecite.com/v2/users/{email}/urls</h1>
 <hr />
-<h2>GET (xhtml)</h2>
+<h2>GET (xhtml)<a name="GET_users_urls_xhtml" id="GET_users_urls_xhtml"></a></h2>
+<p>This endpoint lists bookmarks associated with a given user in a browsable xhtml format. This listing also maps urls to a localy unique UUID that can be used by the <a href="../users_urls_urlid/index.html">url detail</a> endpoint. </p>
+<p>Usage Example:</p>
 <p><img src="GET_users_urls.jpg" width="850" height="521" alt="user_urls" /></p>
 <p><img src="GET_users_urls_headers.jpg" width="852" height="241" alt="user_urls" /></p>
 <p><img src="GET_users_urls_body.jpg" width="850" height="236" alt="user_urls" /></p>
+<p>Below is a &quot;pretty-printed&quot; representation of the returned xhtml. </p>
 <p>&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;<br />
   &lt;html xmlns=&quot;http://www.w3.org/1999/xhtml&quot;&gt;<br />
 &lt;head&gt;<br />
@@ -23,10 +26,13 @@
 &lt;/html&gt;</p>
 <p>&nbsp;</p>
 <hr />
-<h2>GET (xml)</h2>
+<h2>GET (xml)<a name="GET_users_urls_xml" id="GET_users_urls_xml"></a></h2>
+<p>This endpoint lists bookmarks associated with a given user in a browsable xml format. Adding a .xml extension to the above url will produce this output in xml format. </p>
+<p>Usage Example:</p>
 <p><img src="GET_users_urls_xml.jpg" width="850" height="561" alt="user_urls" /></p>
 <p><img src="GET_users_urls_xml_headers.jpg" width="850" height="250" alt="user_urls" /></p>
 <p><img src="GET_users_urls_xml_body.jpg" width="853" height="240" alt="user_urls" /></p>
+<p>Below is a &quot;pretty-printed&quot; representation of the returned xml. </p>
 <p>&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;<br />
   &lt;urls&gt;<br />
 &lt;url&gt;<br />
@@ -39,9 +45,13 @@
 &lt;/url&gt;<br />
 &lt;/urls&gt;</p>
 <hr />
-<h2>POST (xml)</h2>
+<h2>POST (xml)<a name="POST_users_urls_xml" id="POST_users_urls_xml"></a></h2>
+<p>POSTing to this endpoint will create a new bookmark resource and associate it with a user. Optional 'comment' and 'category' tags may be added to this xml to associate categories and comments with the new bookmark.  Comments are associated with the bookmark via a one-to-may relationship; categories are associated with a bookmark via a many-to-many relationship. If a specified category does not exist, a new category will be created. This service validates the POSTed XML for syntax and for adherence to the RelaxNG spec. Also, the url, category, and comment data is validated upon submission. If the given bookmark already exists, comment and category data may be updated if there are new entries for those.</p>
+<p>NOTE: I think an improvement to the specification would be to rename the &lt;url&gt; tag to something like &lt;bookmark&gt;.  The current specification lends itself to confusion. </p>
+<p>Usage Example:</p>
 <p><img src="POST_users_url.jpg" width="850" height="453" alt="user_urls" /></p>
 <p><img src="POST_users_url_headers.jpg" width="850" height="237" alt="user_urls" /></p>
+<p>Below are Django Admin screens exemplifying that a new bookmark was added. </p>
 <p><img src="POST_users_url_admin1.jpg" width="839" height="416" alt="user_urls" /></p>
 <p><img src="POST_users_url_admin2.jpg" width="844" height="66" alt="user_urls" /></p>
 <p>&nbsp;</p>

@@ -3,6 +3,7 @@
 <h2>POST (xml)</h2>
 <p>This endpoint takes a list of webservice urls in xml format and adds them to the list of known webservice urls.  A deamon process will then scan these urls perodically, looking for more webservice urls that those services know about. </p>
 <p>Before these urls are added, the POSTed XML is validated for structure and correctness; it is validate against a RelaxNG schema. The URL data itself is validated to ensure they they are proper urls, and is normalized to a standard format (this is to prevent duplicates).</p>
+<p>Usage Example:</p>
 <p><img src="POST_registerUrls.jpg" width="850" height="477" alt="registerUrls" /></p>
 <p><img src="POST_registerUrls_headers.jpg" width="848" height="254" alt="registerUrls" /></p>
 <p>This shows the new urls listed in the Django admin interface after they have been added. <a href="http://likecite.com/admin/bcore/urlmodel/">http://likecite.com/admin/bcore/urlmodel/</a></p>

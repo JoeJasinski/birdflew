@@ -1,9 +1,13 @@
 <h1>ENDPOINT http://likecite.com/v2/categories</h1>
+<p>NOTE: New categories are created when users POST or PUT data to new or existing urls. </p>
 <hr />
 <h2>GET (xhtml)</h2>
+<p>This endpoints lists all available categories that have been created. This default representation displays the categories in xhtml format. </p>
+<p>Usage Example:</p>
 <p><img src="GET_categories.jpg" width="850" height="527" alt="categories" /></p>
 <p><img src="GET_categories_headers.jpg" width="859" height="201" alt="categories" /></p>
 <p><img src="GET_categories_body.jpg" width="852" height="135" alt="categories" /></p>
+<p>Below is a &quot;pretty-printed&quot; representation of the returned xhtml. </p>
 <p>&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;<br />
   &lt;html xmlns=&quot;http://www.w3.org/1999/xhtml&quot;&gt;<br />
 &lt;head&gt;<br />
@@ -24,9 +28,12 @@
 &lt;/html&gt;</p>
 <hr />
 <h2>GET (xml)</h2>
+<p>By appending a .xml to the endpoint specified above, one will recieve an XML formatted representation of the category data. </p>
+<p>Usage Example:</p>
 <p><img src="GET_categories_xml.jpg" width="852" height="567" alt="categories" /></p>
 <p><img src="GET_categories_xml_headers_.jpg" width="863" height="212" alt="categories" /></p>
 <p><img src="GET_categories_xml_body.jpg" width="850" height="228" alt="categories" /></p>
+<p>Below is a &quot;pretty-printed&quot; representation of the returned xml. </p>
 <p>&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;<br />
   &lt;categories&gt;<br />
 &lt;category&gt;<br />

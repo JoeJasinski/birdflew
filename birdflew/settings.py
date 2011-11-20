@@ -186,7 +186,7 @@ DEFAULT_MAX_REQUESTS_PER_INTERVAL = 5
 
 DEFAULT_CHECK_INTERVAL=500
 
-# How long errors will be recorded for in the cache
+# How long XML parsing errors or other nodes will be recorded for in the cache
 DEFAULT_CACHE_ERROR_PERSIST = DEFAULT_CHECK_INTERVAL * 10
 
 try:

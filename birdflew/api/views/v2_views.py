@@ -92,7 +92,7 @@ class users_list(BlankView):
     
 
 @receiver(signals.post_save, sender=User)
-def del_api_lookupuurlsView(sender, instance, **kwargs):
+def del_api_lookupurlsView(sender, instance, **kwargs):
     cache.delete(users_list_cache_key)
 
 

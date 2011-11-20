@@ -22,7 +22,7 @@ class lookupurlsView(BlankView):
     
     @method_decorator(validators.RateLimitDecorator)
     def get(self, request, *args, **kwargs):
-        url_response = cache.get('api_lookupuurlsView')
+        url_response = cache.get('api_lookupurlsView')
         if not url_response:
             url_list = UrlModel.objects.values('url')
             E = ElementMaker()
@@ -32,14 +32,14 @@ class lookupurlsView(BlankView):
             
             xml = URLS(*map(lambda x: URL(x['url']), url_list))
             url_response = prepxml(etree.tostring(xml), status)
-            cache.set('api_lookupuurlsView', url_response, settings.DEFAULT_CACHE_TIMEOUT)
+            cache.set('api_lookupurlsView', url_response, settings.DEFAULT_CACHE_TIMEOUT)
 
         return url_response
 
 
 @receiver(signals.post_save, sender=UrlModel)
-def del_api_lookupuurlsView(sender, instance, **kwargs):
-    cache.delete('api_lookupuurlsView')
+def del_api_lookupurlsView(sender, instance, **kwargs):
+    cache.delete('api_lookupurlsView')
 
 
 class registerurlsView(BlankView):

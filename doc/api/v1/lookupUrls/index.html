@@ -6,9 +6,17 @@
 </head>
 
 <body>
-<p>GET</p>
+<h1>ENDPOINT http://likecite.com/v1/lookupUrls</h1>
+<hr />
+<h2>GET (xml)</h2>
+<p>Submitting a GET request to this url returns a list of urls that this node is aware of.  The list of urls listed here is gathered in one of two ways:</p>
+<ol>
+  <li>Through a post submitted to <a href="../registerUrls/index.html">registerUrls</a></li>
+  <li>Through a deamon process which scans the list of known webservice urls and queries them for more urls. The deamon process runs periodically and is implemented using a Python framework called <a href="http://twistedmatrix.com/trac/">Twisted</a>.</li>
+</ol>
 <p><img src="GET_lookupUrls.jpg" width="780" height="567" alt="lookupUrls" /></p>
 <p><img src="GET_lookupUrls_headers.jpg" width="779" height="259" alt="lookupUrls" /></p>
+<p>Here is a textual representation of the urls returned by this query.</p>
 <p>&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;<br/>
   &lt;urls&gt;<br/>
 &lt;url&gt;http://50.17.226.103:80&lt;/url&gt;<br/>

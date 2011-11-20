@@ -1,4 +1,10 @@
-<h1>Birdflew Peer-to-Peer Social Bookmark Project</h1>
+<style type="text/css">
+<!--
+.highlight {
+	color: #C00;
+}
+-->
+</style><h1>Birdflew Peer-to-Peer Social Bookmark Project</h1>
 <h2>SE560 Report </h2>
 <h4>Summary</h4>
 <p>The hostname for this node currently resides at http://ec2-50-19-183-238.compute-1.amazonaws.com.  Time permitting, I intend to give it a shorter domain.</p>
@@ -16,6 +22,9 @@
 <li>XML to XHTML conversion using XSLT</li>
 </ol>
 <h4>URL Methods</h4>
+<p>NOTS:</p>
+<li>Screenshots for REST calls included in the examples below are of the Firefox Extension, <a href="https://addons.mozilla.org/en-US/firefox/addon/restclient/">RESTClient</a>. </li>
+&nbsp;</p>
 <hr />
 <p><a href="api/v1/whoami/index.html">/v1/whoami</a> GET</p>
 <blockquote>
@@ -34,9 +43,7 @@
    &lt;url&gt;http://50.17.226.103:80&lt;/url&gt;     
    &lt;url&gt;http://afternoon-snow-4694.herokuapp.com:80&lt;/url&gt;   
    ....   
-&lt;/urls&gt;
-  </pre>
-  </blockquote>
+&lt;/urls&gt;</pre></blockquote>
 </blockquote>
 <hr />
 <p><a href="api/v1/registerUrls/index.html">/v1/registerUrls</a> POST
@@ -47,7 +54,7 @@
   <p>-- Input: none  <br>
   -- Output: List of users</p>
 </blockquote>
-<p><a href="">  </a></p>
+<p>  <span class="highlight">LIVE URL </span>- <a href="http://likecite.com/v2/users">http://likecite.com/v2/users</a></p>
 <hr />
 <p><a href="api/v2/users/index.html">/v2/users</a> POST
 </p>
@@ -123,7 +130,6 @@
     &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
     &lt;message&gt;&lt;success&gt;Subscription added&lt;/success&gt;&lt;/message&gt;</pre>
 </blockquote>
-<h4>TODO</h4>
-<ol>
-<li>More testing needed</li>
-</ol>
+<hr />
+<p><a href="api/v2/users_notify/index.html">/v2/users/{username}/notify</a> POST </p>
+<p>&nbsp;</p>

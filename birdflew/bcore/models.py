@@ -13,6 +13,9 @@ from api import validators
 from lxml import etree
 from lxml.builder import ElementMaker 
 
+import logging
+logger = logging.getLogger('birdflew.notification_logger')
+
 class TrackingMixin(models.Model):
 
     created = models.DateTimeField(auto_now_add=True)
@@ -123,15 +126,17 @@ class Subscriber(TrackingMixin, models.Model):
    
 def notify_subscribers_thread(user, xml, **kwargs):   
 
+    logger.info("Sending notifications")
     for subscriber in Subscriber.objects.filter(user=user):
-
+        
+        logger.info("SUBSCRIBER XML: %s\n%s" % (subscriber.callback_url, etree.tostring(xml, pretty_print=True)))
         request = urllib2.Request(subscriber.callback_url, data=etree.tostring(xml, pretty_print=True ))
         try:
             response = urllib2.urlopen(request)
         except urllib2.HTTPError, e:
-            pass
+            logger.info("SUBSCRIBER Error %s" % e)
         except urllib2.URLError, e:
-            pass
+            logger.info("SUBSCRIBER Error %s" % e)
 
 
        
@@ -139,7 +144,6 @@ def notify_subscribers_thread(user, xml, **kwargs):
 def notify_subscribers(sender, instance, **kwargs):
     user = instance.user
     bookmark = instance
-
     timeout = 10
     socket.setdefaulttimeout(timeout)
 
@@ -151,7 +155,8 @@ def notify_subscribers(sender, instance, **kwargs):
     
     t = threading.Thread(target=notify_subscribers_thread,
                          args=[user, xml])
-
+    t.setDaemon(True)
+    t.start()
 
 class Notification(TrackingMixin, models.Model):   
     

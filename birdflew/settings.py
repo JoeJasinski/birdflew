@@ -157,7 +157,12 @@ LOGGING = {
         'mail_admins': {
             'level': 'ERROR',
             'class': 'django.utils.log.AdminEmailHandler'
-        }
+        },
+        'notification_handler': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(ENVIRONMENT_ROOT, 'log', 'notifications.log'),
+        },       
     },
     'loggers': {
         'django.request': {
@@ -165,6 +170,12 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': True,
         },
+        'birdflew.notification_logger': {
+            'handlers': ['notification_handler'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+
     }
 }
 

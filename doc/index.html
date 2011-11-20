@@ -11,7 +11,7 @@
 <p>Currently, the node is being hosted off of an amazon ec2 instance.  The application is built using the Python-based web framework Django.  It uses the Nginx webserver for static content hosting, fastcgi/flup for dynamic content, PostgreSQL for the persistence layer, lxml for xml parsing/rendering, and redis for caching.</p>
 <p>Currently, the main user that I have on the site by default is joe@joe.com.  This user can be accessed by querying the following url:</p>
 <p>http://ec2-50-19-183-238.compute-1.amazonaws.com/v2/users/joe@joe.com</p>
-<p>The current API methods are functioning according to the specification.  They probably need a bit more debugging but are working as far as I am aware.  Most of the v2 GET urls support a .xml extension to display the data in xml format.  By default, urls are stored in </p>
+<p>Most of the v2 GET urls support a .xml extension to display the data in xml format.  By default, urls respond in xhtml format. Click each endpoint below to get more information about it. </p>
 <h4>Features</h4>
 <ol>
 <li>Support for xhtml microformat output</li>
@@ -24,6 +24,7 @@
 <h4>URL Methods</h4>
 <p>NOTS:</p>
 <li>Screenshots for REST calls included in the examples below are of the Firefox Extension, <a href="https://addons.mozilla.org/en-US/firefox/addon/restclient/">RESTClient</a>. </li>
+<li>Most of the URL endpoints are protected by a rate-limit middleware. It allows 5 request every 30 seconds to each endpoint.</li>
 &nbsp;</p>
 <hr />
 <p><a href="api/v1/whoami/index.html">/v1/whoami</a> GET</p>

@@ -181,6 +181,10 @@ CACHES = {
 }
 
 DEFAULT_CACHE_TIMEOUT = 300
+
+# The interval, in seconds, that will be used to track the quota.
+# For example, if DEFAULT_CACHE_RATE_LIMIT=30 and DEFAULT_MAX_REQUESTS_PER_INTERVAL=5, 
+# then one will be allowed to make 5 requests every 30 seconds. 
 DEFAULT_CACHE_RATE_LIMIT = 30 #600  # rate limit cache timeout
 DEFAULT_MAX_REQUESTS_PER_INTERVAL = 5
 

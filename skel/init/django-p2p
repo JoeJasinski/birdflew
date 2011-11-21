@@ -40,15 +40,17 @@ d_start()
     # Starting all Django FastCGI processes
     for SITE in $DJANGO_SITES
     do
+        PID_FILE="${SITES_PATH}/${SITE}/run/django.pid"
         echo -n ", $SITE"
-        if [ -f "${SITES_PATH}/${SITE}/run/fcgi.pid" ]; then
+        if [ -f "$PID_FILE" ]; then
             echo -n " already running"
         else
             start-stop-daemon --start  \
-                       --pidfile ${SITES_PATH}/${SITE}/run/fcgi.pid \
+                       --pidfile "${PID_FILE}" \
                        --chuid $RUN_AS \
                        --exec ${SITES_PATH}/${SITE}/bin/start_fastcgi.sh -- $ARGS
-            chmod 400 "${SITES_PATH}/${SITE}/run/fcgi.pid"
+            echo "Started: ${PID_FILE}" 
+            chmod 400 "$PID_FILE"
         fi
     done
 }
@@ -60,11 +62,12 @@ d_stop() {
     # Killing all Django FastCGI processes running
     for SITE in $DJANGO_SITES
     do
+        PID_FILE="${SITES_PATH}/${SITE}/run/django.pid"
         echo -n ", $SITE"
-        start-stop-daemon --stop --quiet --pidfile "${SITES_PATH}/${SITE}/run/fcgi.pid" \
+        start-stop-daemon --stop --quiet --pidfile "$PID_FILE" \
                           || echo -n " not running"
-        if [ -f "${SITES_PATH}/${SITE}/run/fcgi.pid" ]; then
-           rm "${SITES_PATH}/${SITE}/run/fcgi.pid"
+        if [ -f "$PID_FILE" ]; then
+           rm "$PID_FILE"
         fi
     done
 }

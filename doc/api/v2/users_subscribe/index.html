@@ -1,7 +1,9 @@
 <h1>ENDPOINT http://likecite.com/v2/users/{email}/subcribe</h1>
 <hr />
 <h2>POST (xml)</h2>
+<p>POSTing a callback url in the format below subscribes the sender to changes to {email}user's bookmarks.  When a bookmark belonging to {email} is modified, a message will be sent to the callback urls provided during subscription. See an example of the callback url format below. This service validates the POSTed XML for syntax and for adherence to the RelaxNG spec.</p>
 <p>Usage Example:</p>
 <p><img src="POST_subscribe.jpg" width="850" height="442" alt="subscribe" /></p>
 <p><img src="POST_subscribe_headers.jpg" width="850" height="227" alt="subscribe" /></p>
+<p>Django admin interface showing that a subscriber has been added. </p>
 <p><img src="POST_subscribe_admin.jpg" width="777" height="147" alt="subscribe" /></p>

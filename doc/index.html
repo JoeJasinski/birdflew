@@ -7,10 +7,16 @@
 </style><h1>Birdflew Peer-to-Peer Social Bookmark Project</h1>
 <h2>SE560 Report </h2>
 <h4>Summary</h4>
-<p>The hostname for this node currently resides at http://ec2-50-19-183-238.compute-1.amazonaws.com.  Time permitting, I intend to give it a shorter domain.</p>
+<p>This peer-to-peer social bookmarking project takes the code name, &quot;birdflew&quot;. The live webservice can be accessed at <a href="http://likecite.com">http://likecite.com</a>.  </p>
 <p>Currently, the node is being hosted off of an amazon ec2 instance.  The application is built using the Python-based web framework Django.  It uses the Nginx webserver for static content hosting, fastcgi/flup for dynamic content, PostgreSQL for the persistence layer, lxml for xml parsing/rendering, and redis for caching.</p>
 <p>Currently, the main user that I have on the site by default is joe@joe.com.  This user can be accessed by querying the following url:</p>
-<p>http://ec2-50-19-183-238.compute-1.amazonaws.com/v2/users/joe@joe.com</p>
+<p><a href="http://likecite.com/v2/users/joe@joe.com">http://likecite.com/v2/users/joe@joe.com</a></p>
+<p>This user's bookmarks may be found at the following url:</p>
+<p><a href="http://likecite.com/v2/users/joe@joe.com/urls">http://likecite.com/v2/users/joe@joe.com/urls</a></p>
+<p>A list of all available users may be viewed at the following url: </p>
+<p><a href="http://likecite.com/v2/users">http://likecite.com/v2/users</a></p>
+<p>The Django administrative interface can be accessed at the following url:</p>
+<p><a href="http://likecite.com/admin/">http://likecite.com/admin/</a> </p>
 <p>Most of the v2 GET urls support a .xml extension to display the data in xml format.  By default, urls respond in xhtml format. Click each endpoint below to get more information about it. </p>
 <h4>Features</h4>
 <ol>
@@ -21,117 +27,57 @@
 <li>Programmatically created XML</li>
 <li>XML to XHTML conversion using XSLT</li>
 </ol>
+<h4>Persistance</h4>
+<p>This project uses PostgreSQL for data persistance. Data stored in Postgres is accessed and persisted using the Django ORM in real time. The core models that Django manages are as follows: </p><li><a href="http://likecite.com/admin/bcore/bookmark/">Bookmarks</a></li>
+<li><a href="http://likecite.com/admin/bcore/category/">Categories</a></li>
+<li><a href="http://likecite.com/admin/bcore/notification/">Notifications</a></li>
+<li><a href="http://likecite.com/admin/bcore/subscriber/">Subscribers</a></li>
+<li><a href="http://likecite.com/admin/bcore/urlmodel/">UrlModels</a></li>
+<p>Redis also provides partial persistance in the form of caching and rate-limit control. The Redis service syncs stored key/value data to disk every second. A video showing successful persistent reboot of the Linux box can be viewed <a href="2011-11-21_0027.swf">here</a>.
+</p>
+<h4>Status Page</h4>
+<p>The status page found at the root url, <a href="http://likecite.com">http://likecite.com</a>, contains a list of all available nodes and their status. When the Twisted deamon process periodically scans the other nodes, this screen displays any parsing or data errors found. </p>
+<p><strong>Extra Information</strong></p><li>For api version 1, I created basic <a href="https://github.com/DePaulSE560/jasinskij/blob/master/birdflew/api_client/tests.py">unit tests</a> for testing the implemntation of specification. </li>
+<li>I created/modified <a href="https://github.com/DePaulSE560/jasinskij/tree/master/skel/nginx">nginx</a>, <a href="https://github.com/DePaulSE560/jasinskij/blob/master/skel/redis/redis.conf">redis</a>, and <a href="https://github.com/DePaulSE560/jasinskij/tree/master/skel/bfsettings">django</a> configuration files and created <a href="https://github.com/DePaulSE560/jasinskij/tree/master/skel/bin">start/stop</a> scripts for the various services. I also created <a href="https://github.com/DePaulSE560/jasinskij/tree/master/skel/init">init</a> scripts to start and stop the services as the server starts and stops. </li>
+<li>All Python code is isolated within a <a href="http://www.virtualenv.org/en/latest/index.html">virtualenv</a> per common practice. The directory structure used is a variation of a common approach to Django hosting.</li>
+<li>This project begins to make use of fabric and jinja2 to automatically configure variables in configurtion files. Initial work was done in this <a href="https://github.com/DePaulSE560/jasinskij/blob/master/skel/make_config.py">make_config.py</a> script. Further work will continue in <a href="https://github.com/JoeJasinski/ideploy">ideploy</a>. </li>
 <h4>URL Methods</h4>
-<p>NOTS:</p>
+<p>NOTES:</p>
 <li>Screenshots for REST calls included in the examples below are of the Firefox Extension, <a href="https://addons.mozilla.org/en-US/firefox/addon/restclient/">RESTClient</a>. </li>
 <li>Most of the URL endpoints are protected by a rate-limit middleware. It allows 5 request every 30 seconds to each endpoint.</li>
-<li>All XML input and output is defined programmatically using the Python lxml ElementFactory (not generated by concatenating strings). </li>
-&nbsp;</p>
+<li>All XML input and output is defined programmatically using the Python lxml ElementFactory (not generated by concatenating strings). &nbsp;</li>
+<li>The xhtml representations of each resource are generated by taking XML repsresentation and translating it using <a href="https://github.com/DePaulSE560/jasinskij/tree/master/birdflew/api/templates/api">XSLT documents</a>.</li>
 <hr />
 <p><a href="api/v1/whoami/index.html">/v1/whoami</a> GET</p>
-<blockquote>
-  <p>
-    --   Input: none <br>
-  --   Output: plain text email of node owner  </p>
-</blockquote>
 <hr />
 <p><a href="api/v1/lookupUrls/index.html">/v1/lookupUrls</a> GET    </p>
-<blockquote>
-  <p>--  Input: none   <br>
-    --  Output:  List of node urls
-  </p>
-  <blockquote>
-    <pre>&lt;urls&gt;
-   &lt;url&gt;http://50.17.226.103:80&lt;/url&gt;     
-   &lt;url&gt;http://afternoon-snow-4694.herokuapp.com:80&lt;/url&gt;   
-   ....   
-&lt;/urls&gt;</pre></blockquote>
-</blockquote>
 <hr />
 <p><a href="api/v1/registerUrls/index.html">/v1/registerUrls</a> POST
 </p>
 <hr />
 <p><a href="api/v2/users/index.html">/v2/users</a> GET  </p>
-<blockquote>
-  <p>-- Input: none  <br>
-  -- Output: List of users</p>
-</blockquote>
 <p>  <span class="highlight">LIVE URL </span>- <a href="http://likecite.com/v2/users">http://likecite.com/v2/users</a></p>
 <hr />
 <p><a href="api/v2/users/index.html">/v2/users</a> POST
 </p>
-<blockquote>
-  <p> --  Input:</p>
-  <pre>
-    &lt;user&gt;
-        &lt;email&gt;bob@whitequail.org&lt;/email&gt;
-        &lt;node&gt;http://bobs-whizbang.elasticbeanstalk.com&lt;/node&gt;
-    &lt;/user&gt;
-  </pre> 
-   <p>-- Output:</p>
-  <pre>
-    &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
-        &lt;message&gt;&lt;success&gt;User Added&lt;/success&gt;
-    &lt;/message&gt;</pre></blockquote>
 <hr />
 <p><a href="api/v2/users_username/index.html">/v2/users/{username}</a> GET
-    -- Input: none
-  -- Output: user detail for a specific user</p>
+  </p>
 <hr />
-<p><a href="api/v2/users_urls/index.html">/v2/users/{username}/urls</a> GET
-    -- Input: none
-    -- Output: list all users urls</p>
+<p><a href="api/v2/users_urls/index.html">/v2/users/{username}/urls</a> GET    </p>
 <hr />
 <p><a href="api/v2/users_urls/index.html">/v2/users/{username}/urls</a> POST</p>
-<blockquote>
-  <p>-- Input: a required uri, an optional list of categories, and an optional list of comments
-  </p>
-  <pre>
-    &lt;url&gt;
-        &lt;uri&gt;http://somewhere.com&lt;/uri&gt;
-        &lt;categories&gt;
-           &lt;category&gt;News&lt;/category&gt;
-           &lt;category&gt;Sports&lt;/category&gt;
-        &lt;/categories&gt;
-        &lt;comments&gt;
-           &lt;comment&gt;This is comment 1&lt;/comment&gt;
-           &lt;comment&gt;This is comment 2&lt;/comment&gt;
-        &lt;/comments&gt;
-    &lt;/url&gt;
-    </pre>
-  <p>-- Output: </p>
-  <pre>
-    &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
-    &lt;message&gt;&lt;success&gt;Bookmark Added&lt;/success&gt;&lt;/message&gt;</pre>
-</blockquote>
 <hr />
-<p><a href="api/v2/users_urls_urlid/index.html">/v2/users/{username}/urls/{url_id</a>}  GET
-    -- Input: none
-    -- Output: a specific url for a given user</p>
+<p><a href="api/v2/users_urls_urlid/index.html">/v2/users/{username}/urls/{url_id</a>}  GET</p>
 <hr />
-<p><a href="api/v2/categories/index.html">/v2/categories</a> GET
-    -- Input: none
-    -- Output: a list of available categories</p>
+<p><a href="api/v2/categories/index.html">/v2/categories</a> GET    </p>
 <hr />
-<p><a href="api/v2/categories_categoryname/index.html">/v2/categories/{category}</a> GET
-    -- Input: none
-    -- Output: details about a category  </p>
+<p><a href="api/v2/categories_categoryname/index.html">/v2/categories/{category}</a> GET</p>
 <hr />
 <p><a href="api/v2/users_subscribe/index.html">/v2/users/{username}/subscribe</a> POST
 </p>
-<blockquote>
-  <p>-- input:
-  </p>
-  <pre>
-    &lt;subscribe&gt;
-        &lt;callback-url&gt;http://examplenode.org/v2/users/alice@springs.com/notify&lt;/callback-url&gt;
-    &lt;/subscribe&gt;
-    </pre>
-  <p> -- Output:</p>
-  <pre>
-    &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
-    &lt;message&gt;&lt;success&gt;Subscription added&lt;/success&gt;&lt;/message&gt;</pre>
-</blockquote>
 <hr />
 <p><a href="api/v2/users_notify/index.html">/v2/users/{username}/notify</a> POST </p>
+<hr />
+<p> <a href="api/v2/users_notifications/index.html">/v2/users/{user}/notifications</a> GET </p>
 <p>&nbsp;</p>

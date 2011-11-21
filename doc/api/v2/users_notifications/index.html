@@ -1,0 +1,60 @@
+<h1>ENDPOINT http://likecite.com/v2/users/{email}/notifications</h1>
+<hr />
+<h2>GET (xhtml)</h2>
+<p>A list of user notifications can be found at this endpoint. It is presented in xhtml format by default. </p>
+<p><img src="GET_users_notifications.jpg" width="850" height="565" alt="notifications" /></p>
+<p><img src="GET_users_notifications_headers.jpg" width="850" height="237" alt="notifications" /></p>
+<p><img src="GET_users_notifications_body.jpg" width="850" height="190" alt="notifications" /></p>
+<p>Below is a &quot;pretty-printed&quot; representation of the returned xhtml. </p>
+<p>&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;<br />
+  &lt;html xmlns=&quot;http://www.w3.org/1999/xhtml&quot;&gt;<br />
+&lt;head&gt;<br />
+&lt;title&gt;Notifications&lt;/title&gt;<br />
+&lt;/head&gt;<br />
+&lt;body&gt;<br />
+&lt;h1&gt;Notifications&lt;/h1&gt;<br />
+&lt;div class=&quot;notification&quot;&gt;<br />
+&lt;abbr class=&quot;update&quot; title=&quot;2011-11-20T13:24:45&quot;&gt;November 20&lt;/abbr&gt;<br />
+&lt;br/&gt;<br />
+&lt;a href=&quot;http://somenode.org:80/v2/users/bob@nodes.com&quot; rel=&quot;subscription&quot;&gt;Subscription Node<br />
+&lt;/a&gt;<br />
+&lt;br/&gt;<br />
+&lt;a href=&quot;http://somenode.org:80/v2/users/bob@nodes.com/urls/12&quot; rel=&quot;update&quot;&gt;Updated Bookmark<br />
+&lt;/a&gt;<br />
+&lt;br/&gt;<br />
+&lt;/div&gt;<br />
+&lt;div class=&quot;notification&quot;&gt;<br />
+&lt;abbr class=&quot;update&quot; title=&quot;2011-11-20T11:46:00&quot;&gt;November 20&lt;/abbr&gt;<br />
+&lt;br/&gt;<br />
+&lt;a href=&quot;http://somenode.org:80/v2/users/bob@nodes.com&quot; rel=&quot;subscription&quot;&gt;Subscription Node<br />
+&lt;/a&gt;<br />
+&lt;br/&gt;<br />
+&lt;a href=&quot;http://somenode.org:80/v2/users/bob@nodes.com/urls/12&quot; rel=&quot;update&quot;&gt;Updated Bookmark<br />
+&lt;/a&gt;<br />
+&lt;br/&gt;<br />
+&lt;/div&gt;<br />
+&lt;/body&gt;<br />
+&lt;/html&gt;</p>
+<hr />
+<h2>GET (xml)</h2>
+<p>The xml representation for this resource can be retrieved by appending a .xml to the endpoint.</p>
+<p><img src="GET_users_notifications_xml.jpg" width="849" height="563" alt="notifications" /></p>
+<p><img src="GET_users_notifications_xml_headers.jpg" width="850" height="239" alt="notifications" /></p>
+<p><img src="GET_users_notifications_body.jpg" width="850" height="190" alt="notifications" /></p>
+<p>Below is a &quot;pretty-printed&quot; representation of the returned xml. </p>
+<p>&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;<br />
+  &lt;notifications&gt;<br />
+&lt;notification&gt;<br />
+&lt;update-date&gt;2011-11-20T13:24:45&lt;/update-date&gt;<br />
+&lt;update&gt;http://somenode.org:80/v2/users/bob@nodes.com/urls/12&lt;/update&gt;<br />
+&lt;update-date-formated&gt;November 20&lt;/update-date-formated&gt;<br />
+&lt;subscription&gt;http://somenode.org:80/v2/users/bob@nodes.com&lt;/subscription&gt;<br />
+&lt;/notification&gt;<br />
+&lt;notification&gt;<br />
+&lt;update-date&gt;2011-11-20T11:46:00&lt;/update-date&gt;<br />
+&lt;update&gt;http://somenode.org:80/v2/users/bob@nodes.com/urls/12&lt;/update&gt;<br />
+&lt;update-date-formated&gt;November 20&lt;/update-date-formated&gt;<br />
+&lt;subscription&gt;http://somenode.org:80/v2/users/bob@nodes.com&lt;/subscription&gt;<br />
+&lt;/notification&gt;<br />
+&lt;/notifications&gt;</p>
+<p>&nbsp;</p>

@@ -1,0 +1,55 @@
+body {
+  font-family: "Times New Roman", Times, serif;
+  width: 900px; 
+}
+
+p, li {
+ margin-left: 20px; 
+}
+
+td {
+	font-family: "Times New Roman", Times, serif;
+}
+
+th {
+	font-family: "Times New Roman", Times, serif;
+}
+
+hr {
+ margin-left: 20px; 
+}
+
+h1 {
+width: 97%;
+margin: 1em 5px 1em;
+padding: 1em;
+background-color: #CCC;
+ -moz-border-radius: 5px;
+-webkit-border-radius: 5px;
+-o-border-radius: 5px;
+-webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+-moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+}
+
+h2.subhead {
+ margin-top: -70px; 
+ margin-left: 40px; 
+}
+
+
+h4 {
+ width: 100%;
+ background-color: #CCC;
+ -moz-border-radius: 5px;
+-webkit-border-radius: 5px;
+-o-border-radius: 5px;
+position: relative;
+float: left;
+padding: 1em;
+margin: 1em 5px 1em;
+background: white;
+-webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+-moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+}

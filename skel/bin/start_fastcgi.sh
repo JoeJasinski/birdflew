@@ -1,3 +1,4 @@
+#!/bin/sh
 . {{ ENVIRONMENT_DIR }}/bin/activate
 
 ENV_NAME="p2p"

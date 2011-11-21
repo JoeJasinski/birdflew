@@ -17,9 +17,14 @@ th {
 
 hr {
  margin-left: 20px; 
+ height: 1px;
+border: 0;
+color: #ccc;
+background-color: #ccc;
 }
 
 h1 {
+	font-family: 'Nova Square', sans-serrif;
 width: 97%;
 margin: 1em 5px 1em;
 padding: 1em;
@@ -33,12 +38,15 @@ box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
 }
 
 h2.subhead {
+ font-family: 'Nova Square', sans-serrif;
  margin-top: -70px; 
  margin-left: 40px; 
+ color: #00C;
 }
 
 
 h4 {
+ font-family: 'Nova Square', sans-serrif;
  width: 100%;
  background-color: #CCC;
  -moz-border-radius: 5px;

@@ -15,10 +15,10 @@ mapping = [
 #('nginx/conf/fastcgi.conf', os.path.join(VIRTUAL_ENV, 'etc', 'nginx', 'conf','fastcgi.conf'), dict({}, **SHARED)),
 #('nginx/conf/mime.types', os.path.join(VIRTUAL_ENV, 'etc', 'nginx', 'conf','mime.types'), dict({}, **SHARED)),
 #('nginx/conf/proxy.conf', os.path.join(VIRTUAL_ENV, 'etc', 'nginx', 'conf','proxy.conf'), dict({}, **SHARED)),
-#('redis/redis.conf', os.path.join(VIRTUAL_ENV, 'etc', 'redis', 'redis.conf'), dict({}, **SHARED)),
-('bin/start_fastcgi.sh', os.path.join(VIRTUAL_ENV, 'bin', 'start_fastcgi.sh'), dict({}, **SHARED)),
-('bin/start_nginx.sh', os.path.join(VIRTUAL_ENV, 'bin', 'start_nginx.sh'), dict({}, **SHARED)),
-('bin/start_twisted.sh', os.path.join(VIRTUAL_ENV, 'bin', 'start_twisted.sh'), dict({}, **SHARED)),
+('redis/redis.conf', os.path.join(VIRTUAL_ENV, 'etc', 'redis', 'redis.conf'), dict({}, **SHARED)),
+#('bin/start_fastcgi.sh', os.path.join(VIRTUAL_ENV, 'bin', 'start_fastcgi.sh'), dict({}, **SHARED)),
+#('bin/start_nginx.sh', os.path.join(VIRTUAL_ENV, 'bin', 'start_nginx.sh'), dict({}, **SHARED)),
+#('bin/start_twisted.sh', os.path.join(VIRTUAL_ENV, 'bin', 'start_twisted.sh'), dict({}, **SHARED)),
 ]
 
 for source, dest, context in mapping:
